@@ -1,0 +1,23 @@
+{
+    "name": "ltech/web_timbangan_input",
+    "description": "web yang diguanakn untuk mencatat transaksi hasil timbangan",
+    "autoload": {
+        "psr-4": {
+            "Ltech\\WebTimbangan\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ltech\\WebTimbangan\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "aluthxander",
+            "email": "aluthxander75@gmail.com"
+        }
+    ],
+    "require": {
+        "monolog/monolog": "^2.10"
+    }
+}

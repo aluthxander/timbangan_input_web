@@ -1,0 +1,52 @@
+.navbar-toggler-icon {
+    background-image: url('data:image/svg+xml;charset=UTF8,%3Csvg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath stroke="rgba%28255, 255, 255, 1%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+}
+
+.fas.fa-kiwi-bird{
+    font-size: 100%;
+    color: var(--bs-warning-bg-subtle);
+}
+
+.active.nav-link{
+    color: var(--bs-warning) !important;
+}
+
+.jumbotron {
+    background: url('../../img/assets/kiwi_home.jpg');
+    background-size: cover;
+    background-position: 100% 50%;
+    height: 94vh;
+}
+
+.jumbotron .col-12 .text-shop{
+    margin-top: 40vh;
+    margin-left: 10vh;
+}
+
+body {
+    background-color: var(--bs-tertiary-bg);
+}
+
+.store img {
+    height: 250px;
+}
+
+.dropdown-menu[data-bs-popper] {
+    left: 55%;
+    width: 500px;
+}
+
+.barang .tambahbarang, .barang .kurangbarang, .barang .hapusbarang {
+    cursor: pointer;
+}
+
+/* ======================================= admin dashboard ======================================= */
+.dashboard-home .card .card-body i{
+    font-size: 4.5rem;
+}
+
+.dashboard-home .card .card-body .jml{
+    font-size: 3.5rem;
+    font-weight: bold;
+}
+/* ======================================= admin dashboard ======================================= */
