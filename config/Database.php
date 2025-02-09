@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-use Ltech\WebTimbangan\App;
+use Ltech\WebTimbangan\core\App;
 
 class Database{
     private $connection;
@@ -14,13 +14,27 @@ class Database{
         $port = getenv('DB_PORT');
         $dbs = getenv('DB_NAME');
 
-        echo $host . "<br>";
-        echo $user . "<br>";
-        echo $pass . "<br>";
+        $dsn = "mysql:host=$host;port=$port;dbname=$dbs;charset=utf8mb4";
+        $options = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ];
+
+        try {
+            $this->connection = new PDO($dsn, $user, $pass, $options);
+        } catch (PDOException $e) {
+            throw new PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public function getConnection(){
+        return $this->connection;
     }
 }
 
-new Database();
+$database = new Database();
+$conn = $database->getConnection();
 # Konek ke Web Server Lokal
 // $myHost = ;
 // $myUser = "root";

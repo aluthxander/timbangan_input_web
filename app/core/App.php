@@ -1,6 +1,7 @@
 <?php
 
 namespace Ltech\WebTimbangan\core;
+use Exception;
 
 class App {
     public static function loadEnv($file = '../.env') {
