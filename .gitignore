@@ -2,3 +2,7 @@
 .env
 /vendor/
 /logs/*.*
+/assets/admin/*.html
+/assets/template/*.html
+/img/assets/*
+/img/items/*
