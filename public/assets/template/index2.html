@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presensi Berbasis IoT</title>
+    <link rel="stylesheet" href="../../plugin/bootstrap-5.3.3-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../plugin/DataTables/datatables.css">
+    <link rel="stylesheet" href="../../plugin/select2/select2.min.css">
+    <link rel="stylesheet" href="../../plugin/fontawesome-free/css/all.min.css">
+    <style>
+        .navbar-toggler-icon {
+            background-image: url('data:image/svg+xml;charset=UTF8,%3Csvg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath stroke="rgba%28255, 255, 255, 1%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+        }
+
+        .fas.fa-kiwi-bird{
+            font-size: 100%;
+            color: var(--bs-warning-bg-subtle);
+        }
+
+        .active.nav-link{
+            color: var(--bs-warning) !important;
+        }
+
+        body {
+            background-color: var(--bs-tertiary-bg);
+        }
+
+        .store img {
+            height: 250px;
+        }
+
+        .dropdown-menu[data-bs-popper] {
+            left: 55%;
+            width: 500px;
+        }
+
+        .barang .tambahbarang, .barang .kurangbarang, .barang .hapusbarang {
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand text-white" href="#">Kiwi<i class="fas fa-kiwi-bird"></i><span class="text-warning">Shop</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-white" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white active" href="#">Store</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#">Transaction</a>
+                </li>
+            </ul>
+            <form class="d-flex ms-auto" role="search">
+                <button class="btn btn-outline-warning position-relative dropdown-toggle" id="btnChart" type="button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <div class="row px-4 py-1 text-center headershop">
+                        <div class="col-3">Nama</div>
+                        <div class="col-3">Harga</div>
+                        <div class="col-4">Qty</div>
+                        <div class="col-2">Aksi</div>
+                    </div>
+                    <div class="dropdown-divider top"></div>
+
+                    <div class="dropdown-divider down"></div>
+                    <div class="row px-4 py-1 total">
+                        <div class="col-3 text-center">Total</div>
+                        <div class="col-9 totalpembelian">Rp. 0,00</div>
+                    </div>
+                    <div class="dropdown-divider down"></div>
+                    <div class="row px-4">
+                        <form action="">
+                            <div class="col-12 mb-3">
+                                <input type="text" name="name" class="form-control" placeholder="Nama">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <input type="text" name="address" class="form-control" placeholder="Alamat">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <input type="text" name="phoneNumber" class="form-control" placeholder="No. Telp">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <button type="button" class="btn w-100 disabled" id="btnCheckout" disabled>Checkout</button>
+                            </div>
+                        </form>
+                    </div>
+                </ul>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container store mt-5">
+    <div class="row pt-4">
+        <div class="col-12 d-flex justify-content-center text-center text-dark">
+            <h1 class="fw-bold border-bottom w-25">STORE</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <img src="./img/items/fruits.jpg" class="card-img-top" alt="fruits">
+                <div class="card-body">
+                    <h5 class="card-title">Fruits</h5>
+                    <div class="row">
+                        <div class="col-8 align-content-center">
+                            <span class="fs-4">Rp. 10.000</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-warning" data-id="1"><i class="fas fa-cart-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <img src="./img/items/kiwi.jpg" class="card-img-top" alt="kiwi">
+                <div class="card-body">
+                    <h5 class="card-title">Kiwi Fruits Yummy!</h5>
+                    <div class="row">
+                        <div class="col-8 align-content-center">
+                            <span class="fs-4">Rp. 9.500</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-warning" data-id="2"><i class="fas fa-cart-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <img src="./img/items/kiwi-bird.jpg" class="card-img-top" alt="kiwi-bird">
+                <div class="card-body">
+                    <h5 class="card-title">Kiwi Bird</h5>
+                    <div class="row">
+                        <div class="col-8 align-content-center">
+                            <span class="fs-4">Rp. 950.000</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-warning" data-id="3"><i class="fas fa-cart-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <img src="./img/items/kiwi-jam.jpg" class="card-img-top" alt="kiwi-jam">
+                <div class="card-body">
+                    <h5 class="card-title">Kiwi Jam</h5>
+                    <div class="row">
+                        <div class="col-8 align-content-center">
+                            <span class="fs-4">Rp. 50.250</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-warning" data-id="4"><i class="fas fa-cart-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <img src="./img/items/kiwi-oil.jpg" class="card-img-top" alt="kiwi-oil">
+                <div class="card-body">
+                    <h5 class="card-title">Kiwi Oil</h5>
+                    <div class="row">
+                        <div class="col-8 align-content-center">
+                            <span class="fs-4">Rp. 46.000</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-warning" data-id="5"><i class="fas fa-cart-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <img src="./img/items/kiwi-tree.jpg" class="card-img-top" alt="kiwi-tree">
+                <div class="card-body">
+                    <h5 class="card-title">Kiwi Tree</h5>
+                    <div class="row">
+                        <div class="col-8 align-content-center">
+                            <span class="fs-4">Rp. 255.000</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-warning" data-id="6"><i class="fas fa-cart-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <img src="./img/items/Kiwi_Seed.jpg" class="card-img-top" alt="kiwi-tree">
+                <div class="card-body">
+                    <h5 class="card-title">Kiwi Seed</h5>
+                    <div class="row">
+                        <div class="col-8 align-content-center">
+                            <span class="fs-4">Rp. 100</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-warning" data-id="7"><i class="fas fa-cart-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4 d-flex justify-content-center">
+            <div class="card" style="width: 18rem;">
+                <img src="./img/items/melon.jpg" class="card-img-top" alt="kiwi-tree">
+                <div class="card-body">
+                    <h5 class="card-title">It isn't kiwi</h5>
+                    <div class="row">
+                        <div class="col-8 align-content-center">
+                            <span class="fs-4">Rp. 35.000</span>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-warning" data-id="8"><i class="fas fa-cart-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../plugin/Jquery/jquery-3.7.1.slim.min.js"></script>
+<script src="../../plugin/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+<script src="../../plugin/DataTables/datatables.js"></script>
+<script src="../../plugin/sweetalert/sweetalert2@11.js"></script>
+<script src="../../plugin/select2/select2.min.js"></script>
+
+<script>
+let data = [];
+
+function initialPembelian(datajson) {
+    // ubah drop down dengan hapus data lama
+    $('.row.barang').remove();
+    // tambahkan data baru
+    let itembaru = '';
+    datajson.forEach(el => {
+        let totalPrice = new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(el.total);
+        itembaru += `<div class="row px-4 py-1 barang" id="barang-${el.id}">
+                        <div class="col-3">${el.name}</div>
+                        <div class="col-3 text-center totalharga">${totalPrice}</div>
+                        <div class="col-4 text-center">
+                            <span data-id="${el.id}" class="me-2 tambahbarang"><i class="fas fa-plus-circle"></i></span>
+                            <span class="qty">${el.qty}</span>
+                            <span data-id="${el.id}" class="ms-2 kurangbarang"><i class="fas fa-minus-circle"></i></span>
+                        </div>
+                        <div class="col-2 text-center">
+                            <button type="button" class="badge bg-danger hapusbarang" data-id="${el.id}"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>`;
+    });
+    $('.dropdown-divider.top').after(itembaru);
+    // ubah total pembelian
+    let totalPembelian = 0;
+    datajson.forEach(el => {
+        totalPembelian += el.total;
+    });
+    totalPembelian = new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(totalPembelian);
+    $('.row.total .totalpembelian').text(totalPembelian);
+}
+$(document).ready(function () {
+    var buttonall = $('.store .row button');
+    buttonall.on('click', function () {
+        var id = $(this).data('id');
+        var card = $(this).closest('.card');
+        var name = card.find('.card-title').text();
+        var priceText = card.find('.fs-4').text();
+        var priceNumber = parseInt(priceText.replace(/[Rp. ]/g, ''), 10);
+        var qty = 1;
+        var total = priceNumber * qty;
+
+        var jsondata = {
+            id: id,
+            name: name,
+            price: priceNumber,
+            qty: qty,
+            total: total
+        };
+        // cek apakah data ada
+        var dataExist = data.find(el => el.id === id) ? true : false;
+        // jika ada maka tambahkan qty jika tidak maka tambahkan data
+        if (dataExist) {
+            data.forEach(el => {
+                if (el.id === id) {
+                    el.qty += 1;
+                    el.total = el.price * el.qty;
+                }
+            });
+        }else{
+            data.push(jsondata);
+        }
+
+        // initialize pembelian
+        initialPembelian(data);
+
+        // initialisasi button pada chart
+        // tambah barang
+        $('.barang .tambahbarang').on('click', function (event) {
+            event.stopPropagation();
+            let idbarang = $(this).data('id');
+            data.forEach(el => {
+                if (el.id === idbarang) {
+                    el.qty += 1;
+                    el.total = el.price * el.qty;
+                }
+            });
+
+            // ambil data barang
+            let databarang = data.find(el => el.id === idbarang);
+            // ubah harga dan qty barang
+            let priceTotal = new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(databarang.total);
+            let qty = databarang.qty;
+            $('#barang-'+idbarang+' .totalharga').text(priceTotal);
+            $('#barang-'+idbarang+' .qty').text(qty);
+            // total pembelian
+            let totalPembelian = 0;
+            data.forEach(el => {
+                totalPembelian += el.total;
+            });
+            totalPembelian = new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(totalPembelian);
+            $('.row.total .totalpembelian').text(totalPembelian);
+        });
+        // kurang barang
+        $('.barang .kurangbarang').on('click', function (event) {
+            event.stopPropagation();
+            let idbarang = $(this).data('id');
+            
+            data.forEach(el => {
+                if (el.id === idbarang) {
+                    el.qty -= 1;
+                    if (el.qty < 1) {
+                        el.qty = 1
+                    }
+                    el.total = el.price * el.qty;
+                }
+            });
+            // ambil data barang
+            let databarang = data.find(el => el.id === idbarang);
+            // ubah harga dan qty barang
+            let priceTotal = new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(databarang.total);
+            let qty = databarang.qty;
+            $('#barang-'+idbarang+' .totalharga').text(priceTotal);
+            $('#barang-'+idbarang+' .qty').text(qty);
+            // total pembelian
+            let totalPembelian = 0;
+            data.forEach(el => {
+                totalPembelian += el.total;
+            });
+            totalPembelian = new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(totalPembelian);
+            $('.row.total .totalpembelian').text(totalPembelian);
+        });
+        // hapus barang
+        $('.barang .hapusbarang').on('click', function (event) {
+            event.stopPropagation();
+            let idbarang = $(this).data('id');
+            data = data.filter(item => item.id !== idbarang);
+            $('#barang-'+idbarang).remove();
+
+            // total pembelian
+            let totalPembelian = 0;
+            data.forEach(el => {
+                totalPembelian += el.total;
+            });
+            totalPembelian = new Intl.NumberFormat('id', { style: 'currency', currency: 'IDR' }).format(totalPembelian);
+            $('.row.total .totalpembelian').text(totalPembelian);
+            // update total
+            let jumlahdata = data.length;
+            let badge = `<span class="badge bg-danger position-absolute top-0 start-100 translate-middle jumlahbarang">${jumlahdata}</span>`;
+            if (jumlahdata > 0) {
+                $('.badge.jumlahbarang').remove();
+                $('#btnChart').append(badge);
+            }else{
+                $('.badge.jumlahbarang').remove();
+            }
+
+            let barang = data.length;
+            let nameVal = $('input[name="name"]').val();
+            let addressVal = $('input[name="address"]').val();
+            let phoneNumberVal = $('input[name="phoneNumber"]').val();
+            
+            if (nameVal !== '' && addressVal !== '' && phoneNumberVal !== '' && barang > 0) {
+                $('#btnCheckout').removeClass('disabled');
+                $('#btnCheckout').addClass('btn-outline-warning');
+                $('#btnCheckout').prop('disabled', false);
+            }else{
+                $('#btnCheckout').removeClass('btn-outline-warning');
+                $('#btnCheckout').addClass('disabled');
+                $('#btnCheckout').prop('disabled', true);
+            }
+        });
+
+        // ubah badge
+        let jumlahdata = data.length;
+        let badge = `<span class="badge bg-danger position-absolute top-0 start-100 translate-middle jumlahbarang">${jumlahdata}</span>`;
+        if (jumlahdata > 0) {
+            $('.badge.jumlahbarang').remove();
+            $('#btnChart').append(badge);
+        }else{
+            $('.badge.jumlahbarang').remove();
+        }
+    });
+
+    $('ul input').on('input', function (event) {
+        event.stopPropagation();
+        let barang = data.length;
+        let nameVal = $('input[name="name"]').val();
+        let addressVal = $('input[name="address"]').val();
+        let phoneNumberVal = $('input[name="phoneNumber"]').val();
+        
+        if (nameVal !== '' && addressVal !== '' && phoneNumberVal !== '' && barang > 0) {
+            $('#btnCheckout').removeClass('disabled');
+            $('#btnCheckout').addClass('btn-outline-warning');
+            $('#btnCheckout').prop('disabled', false);
+        }else{
+            $('#btnCheckout').removeClass('btn-outline-warning');
+            $('#btnCheckout').addClass('disabled');
+            $('#btnCheckout').prop('disabled', true);
+        }
+    });
+
+    $('#btnCheckout').on('click', function (event) {
+        event.stopPropagation();
+        let datajson = JSON.stringify(data);
+        console.log(datajson);
+    });
+});
+</script>
+</body>
+</html>

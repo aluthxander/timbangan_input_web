@@ -1,24 +1,20 @@
-<?php
-$csrf_token = BasicMethod::generateCSRFToken();
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?= $csrf_token; ?>">
-    <title>Kiwi Admin</title>
-    <link rel="stylesheet" href="./plugin/bootstrap-5.3.3-dist/css/bootstrap.css">
-    <link rel="stylesheet" href="./plugin/DataTables/datatables.css">
-    <link rel="stylesheet" href="./plugin/select2/select2.min.css">
-    <link rel="stylesheet" href="./plugin/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="./src/css/admin_navbar.min.css">
-    <link rel="stylesheet" href="./src/css/style.css">
+    <title>Web Timbangan</title>
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="./public/assets/vendor/bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./public/assets/vendor/DataTables/datatables.min.css">
+    <link rel="stylesheet" href="./public/assets/vendor/select2/select2.min.css">
+    <link rel="stylesheet" href="./public/assets/vendor/fontawesome-free/css/all.css">
+    <link rel="stylesheet" href="./public/css/style.css">
+
+    <script src="./public/assets/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
+    <script src="./public/assets/vendor/DataTables/datatables.min.js"></script>
+    <script src="./public/assets/vendor/Jquery/jquery-3.7.1.slim.min.js"></script>
+    <script src="./public/assets/vendor/inputmask/imask.js"></script>
+    <script src="./public/assets/vendor/sweetalert/sweetalert2@11.js"></script>
 </head>
-<?php
-    $attr = "";
-    if (isset($_GET['route'])) {
-        $attr = $_GET['route'] == 'admin' ? ' id="body-pd" class="body-pd"' : '';
-    }
-?>
-<body <?= $attr ?>>
+<body>

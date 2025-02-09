@@ -1,1 +1,1 @@
-<?php require "./pages/route.php" ?>
+<?php require "./routes/web.php" ?>

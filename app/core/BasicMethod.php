@@ -1,4 +1,5 @@
 <?php
+namespace Ltech\WebTimbangan\core;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
