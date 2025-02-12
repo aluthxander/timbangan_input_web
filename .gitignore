@@ -1,4 +1,4 @@
-*.sql
+query.sql
 .env
 /vendor/
 /logs/*.*
