@@ -1,37 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="../vendor/bootstrap-5.3.3-dist/css/bootstrap.css">
-    <link rel="stylesheet" href="../vendor/DataTables/datatables.css">
-    <link rel="stylesheet" href="../vendor/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="../vendor/select2/select2.min.css">
-    <link rel="stylesheet" href="../../css/admin_navbar.min.css">
-    <link rel="stylesheet" href="../../css/style.css">
-    
-
-    <script src="../vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.js"></script>
-    <script src="../vendor/Jquery/jquery-3.7.1.slim.min.js"></script>
-    <script src="../vendor/DataTables/datatables.js"></script>
-    <script src="../vendor/excel/exceljs.min.js"></script>
-    <script src="../vendor/chartjs/chart.js"></script>
-    <script src="../vendor/inputmask/imask.js"></script>
-    <script src="../vendor/select2/select2.min.js"></script>
-    <script src="../vendor/sweetalert/sweetalert2@11.js"></script>
-</head>
+<?php
+require './pages/templates/header.php';
+?>
 <body id="body-pd" class="body-pd">
     <header class="header body-pd border-bottom" id="header">
         <div class="header_toggle"><i class="fas fa-bars fs-3" id="header-toggle"></i> </div>
         
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <div class="header_img"> <i class="fa fa-user-circle fa-3x"></i> </div>
+        <a class="nav-link dropdown-toggle d-flex justify-content-between align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="fs-4 me-2">Lutfan</span>
+            <div class="header_img"><i class="fa fa-user-circle fa-3x"></i></div>
         </a>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
             <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Ganti Password</a></li>
-            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li><a class="dropdown-item" href="?page=logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </header>
 
@@ -266,4 +247,6 @@ $(document).ready(function() {
 
 </script>
 </body>
-</html>
+<?php
+require './pages/templates/footer.php';
+?>

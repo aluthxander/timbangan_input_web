@@ -1,6 +1,8 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+namespace Ltech\WebTimbangan\core;
 use Ltech\WebTimbangan\core\App;
+use PDO;
+use PDOException;
 
 class Database{
     private $connection;
@@ -32,28 +34,3 @@ class Database{
         return $this->connection;
     }
 }
-
-$database = new Database();
-$conn = $database->getConnection();
-# Konek ke Web Server Lokal
-// $myHost = ;
-// $myUser = "root";
-// $myPass = "MKH&579";
-// $myPort = 3306;
-// $myDbs = "timbangan_db";
-
-// try {
-//     # Konek ke Web Server Lokal menggunakan PDO
-//     $dsn = "mysql:host=$myHost;port=$myPort;dbname=$myDbs;charset=utf8mb4";
-//     $options = [
-//         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-//         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-//         PDO::ATTR_EMULATE_PREPARES   => false,
-//     ];
-//     $conn = new PDO($dsn, $myUser, $myPass, $options);
-
-//     // Set the PDO error mode to exception
-
-// } catch (PDOException $e) {
-//     echo "Failed Connection: " . $e->getMessage();
-// }

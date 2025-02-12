@@ -45,8 +45,23 @@ body {
     font-size: 4.5rem;
 }
 
+.dashboard-home::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 12rem;
+    background-color: var(--bs-primary);
+    z-index: -1; /* Letakkan di belakang konten utama */
+}
+
 .dashboard-home .card .card-body .jml{
     font-size: 3.5rem;
     font-weight: bold;
+}
+
+.nav-link.dropdown-toggle::after {
+    display: none !important;
 }
 /* ======================================= admin dashboard ======================================= */
