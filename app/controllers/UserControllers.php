@@ -1,7 +1,10 @@
 <?php
 namespace Ltech\WebTimbangan\controllers;
-session_start();
-use Ltech\WebTimbangan\core\BasicMethod;
+// mmengecek session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 use Ltech\WebTimbangan\models\UserModel;
 
 class UserControllers
@@ -54,6 +57,17 @@ class UserControllers
             'msg' => 'Logout berhasil'
         ];
         header('location: index.php');
+    }
+
+    public function getAllUsers(){
+        $users = $this->model->getUsers();
+        // ambil data yang dibutuhkan
+        $users = array_map(fn($user) => array_intersect_key($user, array_flip(['id', 'username', 'email', 'jabatan', 'phone', 'name'])), $users);
+
+        $this->response([
+            'status' => 200,
+            'data' => $users
+        ]);
     }
 
     private function input($key)

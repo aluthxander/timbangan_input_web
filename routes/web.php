@@ -8,6 +8,9 @@ $page = isset($_GET['page']) ? $_GET['page'] : '';
 if ($page == 'home') {
     loginMiddleware::userNotLogin();
     require "./pages/home/index.php";
+}elseif($page == 'users'){
+    loginMiddleware::userNotLogin();
+    require "./pages/users/index.php";
 }elseif($page == 'logout'){
     $user = new UserControllers();
     $user->logout();

@@ -1,0 +1,41 @@
+-- Active: 1733626380290@@127.0.0.1@3306@timbangan_db
+DROP TABLE users;
+DROP TABLE item;
+DROP TABLE transaction;
+CREATE TABLE `users` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL,
+    `username` VARCHAR(255) NOT NULL UNIQUE,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `phone` VARCHAR(255) NOT NULL,
+    `jabatan` ENUM('admin', 'user') NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
+    `remember_token` VARCHAR(100) NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `item` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL,
+    `code` VARCHAR(255) NOT NULL UNIQUE,
+    `style` VARCHAR(255) NOT NULL,
+    `size` ENUM('S', 'M', 'L', 'XL') NOT NULL,
+    `weight_min` DOUBLE(8,4) NOT NULL,
+    `weight_max` DOUBLE(8,4) NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `transaction` (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `no_invoice` VARCHAR(255) NOT NULL UNIQUE,
+    `code_item` VARCHAR(255) NOT NULL,
+    `name_item` VARCHAR(255) NOT NULL,
+    `style_item` VARCHAR(255) NOT NULL,
+    `size_item` VARCHAR(255) NOT NULL,
+    `weight_item` DOUBLE NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

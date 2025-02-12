@@ -69,6 +69,15 @@ a{
     width: var(--nav-width);
     left: -30%;
 }
+
+body .logo-brand{
+    width: 2.3rem;
+    transition: .5s
+}
+
+body.body-pd .logo-brand{
+    width: 9rem;
+}
 .nav{
     height: 100%;
     display: flex;

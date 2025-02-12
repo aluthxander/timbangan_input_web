@@ -16,4 +16,14 @@ class UserModel {
         $stmt->execute(['username' => $username, 'email' => $username]);
         return $stmt->fetch();
     }
+
+    public function countData(){
+        $sql = "SELECT COUNT(*) FROM users;";
+        return  $this->db->getConnection()->query($sql)->fetchColumn();
+    }
+
+    public function getUsers(){
+        $sql = "SELECT * FROM users;";
+        return $this->db->getConnection()->query($sql)->fetchAll();
+    }
 }
