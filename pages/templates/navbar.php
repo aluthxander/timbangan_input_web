@@ -1,3 +1,6 @@
+<?php 
+
+?>
 <header class="header body-pd border-bottom" id="header">
     <div class="header_toggle"><i class="fas fa-bars fs-3" id="header-toggle"></i> </div>
     
@@ -8,28 +11,28 @@
     <ul class="dropdown-menu">
         <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
         <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Ganti Password</a></li>
-        <li><a class="dropdown-item" href="?page=logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </ul>
 </header>
 
 <div class="l-navbar show" id="nav-bar">
     <nav class="nav">
         <div>
-            <a href="?page=home" class="nav_logo"> 
+            <a href="/home" class="nav_logo"> 
                 <!-- <i class="fas fa-kiwi-bird nav_logo-icon"></i><span class="nav_logo-name">kiwiAdmin</span> -->
                 <img src="./img/logo/apparel.png" class="logo-brand img-fluid" style="max-width: 134px;" alt="apparel logo">
             </a>
             <div class="nav_list">
-                <a href="?page=home" class="nav_link <?= $_GET['page'] == 'home' ? ' active' : '' ?>"> 
+                <a href="/home" class="nav_link <?= $model['path'] == 'home' ? ' active' : '' ?>"> 
                     <i class="fas fa-border-all nav_icon"></i> <span class="nav_name">Dashboard</span> 
                 </a> 
-                <a href="?page=users" class="nav_link <?= $_GET['page'] == 'users' ? ' active' : '' ?>"> 
+                <a href="/users" class="nav_link <?= $model['path'] == 'users' ? ' active' : '' ?>"> 
                     <i class="far fa-user nav_icon"></i> <span class="nav_name">Users</span> 
                 </a> 
-                <a href="?page=items" class="nav_link <?= $_GET['page'] == 'items' ? ' active' : '' ?>"> 
+                <a href="/items" class="nav_link <?= $model['path'] == 'items' ? ' active' : '' ?>"> 
                     <i class="fas fa-boxes nav_icon"></i> <span class="nav_name">Items</span> 
                 </a> 
-                <a href="?page=transactions" class="nav_link <?= $_GET['page'] == 'transactions' ? ' active' : '' ?>"> 
+                <a href="/transactions" class="nav_link <?= $model['path'] == 'transactions' ? ' active' : '' ?>"> 
                     <i class="fas fa-clipboard nav_icon"></i> <span class="nav_name">Transactions</span> 
                 </a> 
             </div>

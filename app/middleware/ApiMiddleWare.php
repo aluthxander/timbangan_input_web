@@ -1,11 +1,13 @@
 <?php
 namespace Ltech\WebTimbangan\middleware;
 use Ltech\WebTimbangan\config\Config;
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 class ApiMiddleWare {
     public static function auth() {
         $config = new Config();
-        if ($config->get('APP_ENV') == 'production') {
+        if ($config->getEnv('APP_ENV') == 'production') {
             if (!isset($_SESSION['user'])) {
                 // Jika belum login, redirect ke halaman login
                 http_response_code(401);

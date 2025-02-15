@@ -7,15 +7,15 @@ class Config {
     private static $config = [];
     private static $loaded = false;
 
-    private static function load($filePath = __DIR__ . '/../../.env') {
+    private static function loadEnv($filePath = __DIR__ . '/../../.env') {
         if (!self::$loaded && file_exists($filePath)) {
             self::$config = parse_ini_file($filePath);
             self::$loaded = true;
         }
     }
 
-    public static function get($key, $default = null) {
-        self::load();
+    public static function getEnv($key, $default = null) {
+        self::loadEnv();
         return self::$config[$key] ?? $default;
     }
 }

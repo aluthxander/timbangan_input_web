@@ -200,5 +200,30 @@ class App {
     public static function number_format_decimal($num_str, $decimals = 2) {
         return number_format($num_str, $decimals, ',', '.');
     }
+
+    public static function render(string $view, $data=[]): void {
+        $model['data'] = $data;
+        $model['path'] = self::getPath();
+        $view = str_replace('.', '/', $view);
+        require __DIR__ . "/../../pages/{$view}.php";
+    }
+
+    public static function input($key)
+    {
+        return $_POST[$key] ?? json_decode(file_get_contents('php://input'), true)[$key] ?? null;
+    }
+
+    public static function response($data)
+    {
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
+
+    public static function getPath(): string {
+        $path = $_SERVER['PATH_INFO'] ?? '/';
+        $path = explode('/', $path)[1] ?? '/';
+        return $path;
+    }
 }
 ?>

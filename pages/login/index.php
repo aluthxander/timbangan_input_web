@@ -26,7 +26,7 @@
             <img src="../../../img/logo/apparel.png" alt="apparel" class="img-fluid" style="max-width: 400px;">
         </div>
     </div>
-    <form class="card w-50" style="max-width: 400px;" method="POST" action="{{ route('login.authenticate') }}">
+    <form class="card w-50" style="max-width: 400px;" method="POST">
         <div class="card-body">
             <h4 class="card-title text-center mb-5 mt-4">Login</h4>
             <?php
@@ -97,6 +97,8 @@ document.querySelector('.btn-submit-login').addEventListener('click', function()
         return response.json(); // Mengonversi response ke JSON
     })
     .then(res => {
+        console.log(res);
+        
         this.disabled = false;
         const invalidFeedback = document.querySelector('.password-form .invalid-feedback');
         if (invalidFeedback) {

@@ -6,3 +6,5 @@ query.sql
 /assets/template/*.html
 /img/assets/*
 /img/items/*
+test.php
+/logs/*.*

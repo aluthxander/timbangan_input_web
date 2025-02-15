@@ -24,6 +24,57 @@ require './pages/templates/header.php';
         </div>
     </div>
 </div>
+<div class="users-form pt-5" style="display: none;">
+    <div class="row">
+        <div class="col-12 d-flex justify-content-start align-items-center">
+            <h1 class="fw-bold">Add New User</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label for="namauser" class="form-label">Nama</label>
+                <input type="text" class="form-control" id="namauser" name="namauser">
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label for="phone" class="form-label">No. Telp</label>
+                <input type="text" class="form-control" id="phone" name="phone">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label for="jabatan" class="form-label">Jabatan</label>
+                <select name="jabatan" id="jabatan" class="form-select w-25">
+
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
 function initialTableUsers() {
     $('.table-users').DataTable({
@@ -70,9 +121,27 @@ function initialTableUsers() {
         autoWidth: false,
     });
 }
+
+let beratMin = document.getElementById('phone');
+// input dari kanan ke kiri
+let beratMinMask = new IMask(beratMin, {
+    mask: Number,
+    scale: 0,
+    padFractionalZeros: true
+});
 // dom menggunakan jquery
 $(document).ready(function() {
     initialTableUsers();
+
+    $('.btn-add-user').on('click', function() {
+        $('.users').hide();
+        $('.users-form').show();
+    });
+
+    $('.btn-back-user').on('click', function() {
+        $('.users-form').hide();
+        $('.users').show();
+    });
 });
 
 </script>

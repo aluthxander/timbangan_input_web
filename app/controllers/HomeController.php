@@ -19,6 +19,10 @@ class HomeController
 
     public function index()
     {
+        App::render('home.index');
+    }
+
+    public function getDataHome(){
         $data['count_transaction'] = $this->modelTransaction->countData();
         $data['count_user'] = $this->modelUser->countData();
         $data['count_item'] = $this->modelItem->countData();
