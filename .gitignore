@@ -7,4 +7,5 @@ query.sql
 /img/assets/*
 /img/items/*
 test.php
+test_web.php
 /logs/*.*

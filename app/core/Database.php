@@ -32,12 +32,12 @@ class Database{
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
 
-        try {
-            $this->connection = new PDO($dsn, $user, $pass, $options);
-        } catch (PDOException $e) {
-            $this->handleError("Database Connection Failed: " . $e->getMessage());
-            $this->connection = null;
-        }
+        $this->connection = new PDO($dsn, $user, $pass, $options);
+        // try {
+        // } catch (PDOException $e) {
+        //     $this->handleError("Database Connection Failed: " . $e->getMessage());
+        //     $this->connection = null;
+        // }
     }
 
     public function getConnection(){

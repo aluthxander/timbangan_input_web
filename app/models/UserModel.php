@@ -1,6 +1,7 @@
 <?php
 namespace Ltech\WebTimbangan\models;
 
+use Ltech\WebTimbangan\core\App;
 use Ltech\WebTimbangan\core\Database;
 
 class UserModel {

@@ -6,6 +6,7 @@ use Ltech\WebTimbangan\controllers\LoginController;
 use Ltech\WebTimbangan\controllers\HomeController;
 use Ltech\WebTimbangan\controllers\UserControllers;
 use Ltech\WebTimbangan\controllers\ItemController;
+use Ltech\WebTimbangan\controllers\PositionController;
 use Ltech\WebTimbangan\controllers\TransactionController;
 use Ltech\WebTimbangan\middleware\AuthMiddleware;
 use Ltech\WebTimbangan\middleware\GuestMiddleware;
@@ -17,6 +18,7 @@ Router::add('GET', '/home', HomeController::class, 'index', [AuthMiddleware::cla
 Router::add('GET', '/users', UserControllers::class, 'index', [AuthMiddleware::class]);
 Router::add('GET', '/items', ItemController::class, 'index', [AuthMiddleware::class]);
 Router::add('GET', '/transactions', TransactionController::class, 'index', [AuthMiddleware::class]);
+Router::add('GET', '/positions', PositionController::class, 'index', [AuthMiddleware::class]);
 
 Router::run();
 ?>

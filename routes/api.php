@@ -7,6 +7,7 @@ use Ltech\WebTimbangan\controllers\LoginController;
 use Ltech\WebTimbangan\controllers\UserControllers;
 use Ltech\WebTimbangan\controllers\ItemController;
 use Ltech\WebTimbangan\controllers\HomeController;
+use Ltech\WebTimbangan\controllers\PositionController;
 use Ltech\WebTimbangan\controllers\TransactionController;
 use Ltech\WebTimbangan\middleware\ApiMiddleWare;
 
@@ -31,6 +32,14 @@ if ($route == 'login') {
     ApiMiddleWare::auth();
     $transaction = new TransactionController();
     $transaction->getAllTransaction();
+} elseif ($route == 'positions'){
+    ApiMiddleWare::auth();
+    $position = new PositionController();
+    $position->getPosition();
+} elseif ($route == 'access'){
+    ApiMiddleWare::auth();
+    $position = new PositionController();
+    $position->accesPosition();
 } else {
     http_response_code(404);
     echo json_encode([

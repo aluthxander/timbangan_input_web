@@ -35,6 +35,9 @@
                 <a href="/transactions" class="nav_link <?= $model['path'] == 'transactions' ? ' active' : '' ?>"> 
                     <i class="fas fa-clipboard nav_icon"></i> <span class="nav_name">Transactions</span> 
                 </a> 
+                <a href="/positions" class="nav_link <?= $model['path'] == 'positions' ? ' active' : '' ?>"> 
+                    <i class="fas fa-user-shield"></i> <span class="nav_name">Position & Access</span> 
+                </a> 
             </div>
         </div> 
     </nav>

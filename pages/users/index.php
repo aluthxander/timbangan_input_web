@@ -6,7 +6,10 @@ require './pages/templates/header.php';
         <div class="col-12 d-flex justify-content-between align-items-center">
             <h1 class="fw-bold">Users</h1>
             <div class="d-flex">
-                <button class="btn btn-primary btn-add-user">
+                <button class="btn btn-primary btn-option-position ms-2">
+                    <i class="fas fa-cogs"></i> Position
+                </button>
+                <button class="btn btn-primary btn-add-users ms-2">
                     <i class="fas fa-plus"></i> Add User
                 </button>
                 <button class="btn btn-outline-secondary ms-2">
@@ -69,9 +72,24 @@ require './pages/templates/header.php';
             <div class="mb-3">
                 <label for="jabatan" class="form-label">Jabatan</label>
                 <select name="jabatan" id="jabatan" class="form-select w-25">
-
+                    <option value=""></option>
+                    <?php
+                    foreach ($model['data'] as $value) {
+                        echo "<option value='{$value['id']}'>{$value['jabatan']}</option>";
+                    }
+                    ?>
                 </select>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-end">
+            <button class="btn btn-secondary btn-back-users me-2">
+                <i class="fa fa-chevron-left"></i> Back
+            </button>
+            <button class="btn btn-primary btn-save-users">
+                <i class="fa fa-save"></i> Save
+            </button>
         </div>
     </div>
 </div>
@@ -133,12 +151,12 @@ let beratMinMask = new IMask(beratMin, {
 $(document).ready(function() {
     initialTableUsers();
 
-    $('.btn-add-user').on('click', function() {
+    $('.btn-add-users').on('click', function() {
         $('.users').hide();
         $('.users-form').show();
     });
 
-    $('.btn-back-user').on('click', function() {
+    $('.btn-back-users').on('click', function() {
         $('.users-form').hide();
         $('.users').show();
     });
