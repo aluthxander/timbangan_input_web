@@ -1,10 +1,12 @@
 <?php
 namespace Ltech\WebTimbangan\models;
-use Ltech\WebTimbangan\core\Database;
+use PDOException;
 use Ltech\WebTimbangan\core\App;
+use Ltech\WebTimbangan\core\Database;
 
 class PositionAccessModel{
     private $db;
+    private $table = 'position_access';
 
     public function __construct(){
         $this->db = new Database();
@@ -41,7 +43,7 @@ class PositionAccessModel{
     
             // Query SQL
             $sql = "SELECT {$columnList} 
-                    FROM position_access
+                    FROM {$this->table}
                     INNER JOIN menu_web ON menu_web.id = position_access.menu_id
                     {$where}
                     ORDER BY menu_web.menu ASC;";
@@ -57,5 +59,11 @@ class PositionAccessModel{
             App::logger('error', $th->getMessage(), ['file' => $th->getFile(), 'line' => $th->getLine()]);
             return [];
         }
+    }
+
+    // Method untuk memasukkan data ke dalam tabel position
+    public function insert($data) {
+        $result = $this->db->insert($this->table, $data);
+        return $result;
     }
 }

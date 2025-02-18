@@ -61,6 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($route == 'login') {
         $user = new LoginController();
         $user->login();
+    } elseif ($route == 'positions') {
+        ApiMiddleWare::auth();
+        $position = new PositionController();
+        $position->savePosition();
     } else {
         http_response_code(404);
         echo json_encode([

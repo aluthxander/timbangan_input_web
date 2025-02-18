@@ -67,4 +67,67 @@ class Database{
     public function rollBack() {
         $this->connection->rollBack();
     }
+
+    public function insert( $table, $data) {
+        try {
+            // Menyiapkan kolom dan nilai yang akan dimasukkan
+            $columns = implode(", ", array_keys($data));  // Menyusun nama kolom
+            $values = ":" . implode(", :", array_keys($data));  // Menyusun placeholder untuk nilai
+
+            // Query SQL untuk melakukan insert
+            $sql = "INSERT INTO {$table} ($columns) VALUES ($values)";
+
+            // Persiapkan query
+            $stmt = $this->getConnection()->prepare($sql);
+
+            // Binding data ke placeholder
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+
+            // Eksekusi query
+            if ($stmt->execute()) {
+                return [
+                    'status'=>true, 
+                    'id'=>$this->getConnection()->lastInsertId(), 
+                    'message'=>'Success',
+                    'sql'=>$sql
+                ];  // Mengembalikan ID terakhir yang diinsert
+            } else {
+                return [
+                    'status'=>false, 
+                    'code'=>$stmt->errorCode(), 
+                    'message'=>$this->mapErrorMessage($stmt->errorCode(), $stmt->errorInfo()), 
+                    'sql'=>$sql
+                ];  // Mengembalikan false jika gagal
+            }
+
+        } catch (PDOException $e) {
+            // Menangani error jika terjadi kesalahan pada eksekusi query
+            App::logger('error', $e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
+            return [
+                'status'=>false, 
+                'message'=>$this->mapErrorMessage($e->getCode(), $e->getMessage()), 
+                'code'=>$e->getCode(), 
+                'sql'=>$sql
+            ];
+        }
+    }
+
+    /**
+     * Pemetaan kode error SQL ke pesan yang lebih mudah dipahami
+     */
+    public function mapErrorMessage($errorCode, $defaultMessage = '') {
+        $errorMessages = [
+            '23000' => 'Data yang dimasukkan sudah ada atau melanggar aturan unik.',
+            '22001' => 'Data yang dimasukkan terlalu panjang untuk salah satu kolom.',
+            '42S22' => 'Kolom yang dimasukkan tidak ditemukan dalam tabel.',
+            'HY000' => 'Kesalahan umum dalam query SQL.',
+            '42000' => 'Syntax error dalam query SQL.',
+            '28000' => 'Kredensial database tidak valid atau izin tidak cukup.',
+            'HY001' => 'Memori tidak cukup untuk menyimpan data.'
+        ];
+
+        return $errorMessages[$errorCode] ?? "Terjadi kesalahan: " . $defaultMessage;
+    }
 }

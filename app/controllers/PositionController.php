@@ -1,8 +1,9 @@
 <?php
 namespace Ltech\WebTimbangan\controllers;
 use Ltech\WebTimbangan\core\App;
-use Ltech\WebTimbangan\models\JabatanModel;
+use Ltech\WebTimbangan\core\Database;
 use Ltech\WebTimbangan\models\MenuModel;
+use Ltech\WebTimbangan\models\JabatanModel;
 use Ltech\WebTimbangan\models\PositionAccessModel;
 
 class PositionController{
@@ -52,6 +53,24 @@ class PositionController{
         App::response([
             'status' => 200,
             'data' => $menu
+        ]);
+    }
+
+    public function savePosition(){
+        // $data = App::request()->getBody();
+        // $this->model->insertPosition($data);
+        $position = App::input('position');
+        $dataJson = json_decode(App::input('data'), true);
+        // mulai transaksi
+        $database = new Database();
+        $database->beginTransaction();
+        $result = $this->model->insert(['jabatan' => $position]);
+        App::response([
+            'status' => 200,
+            'data' => [
+                'position' => $position,
+                'data' => $result
+            ]
         ]);
     }
 }

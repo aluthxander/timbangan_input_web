@@ -306,13 +306,25 @@ $(document).ready(function() {
             }
         });
 
-        $.post('/routes/api.php?route=positions', {
-            position: position,
-            data: dataJson
-        }).done(function(data) {
-            console.log(data);
-            
-        });
+        // ambil csrf
+        let token = $('input[name="csrf_token"]').val();
+        $.ajax({
+            url: './routes/api.php?route=positions',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token  // Tambahkan token ke header
+            }, 
+            data: {
+                position: position,
+                data: JSON.stringify(dataJson),
+            },
+            success: function(response) {
+                console.log(response);
+                initialTablePositions();
+                // $('.positions-form').hide();
+                // $('.positions').show();
+            }
+        })
     });
 
 });
