@@ -24,14 +24,15 @@ require './pages/templates/header.php';
             <h1 class="fw-bold">Add New Positions</h1>
         </div>
     </div>
-    <div class="row">
+    <form class="row">
         <div class="col-sm-6">
             <div class="mb-3">
+                <input type="hidden" name="csrf_token" value="<?= $model['csrf'] ?>">
                 <label for="nama-position" class="form-label">Position</label>
                 <input type="text" class="form-control" id="nama-position" name="nama-position">
             </div>
         </div>
-    </div>
+    </form>
     <div class="row">
         <table class="table table-bordered table-access"></table>
     </div>
@@ -282,6 +283,8 @@ $(document).ready(function() {
     });
 
     $('.btn-save-positions').on('click', function() {
+        // ambil data input position
+        let position = $('#nama-position').val();
         let check_menu = $('.form-check-input');
         let dataJson = {};
 
@@ -303,7 +306,13 @@ $(document).ready(function() {
             }
         });
 
-        console.log(dataJson);
+        $.post('/routes/api.php?route=positions', {
+            position: position,
+            data: dataJson
+        }).done(function(data) {
+            console.log(data);
+            
+        });
     });
 
 });

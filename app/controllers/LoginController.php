@@ -23,6 +23,8 @@ class LoginController
     {
         $email = App::input('email');
         $password = App::input('password');
+        // hapus session kemudian generate ulang
+        unset($_SESSION['csrf_token']);
         
         $user = $this->model->getUserByName($email);
         if ($user) {

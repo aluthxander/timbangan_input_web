@@ -204,6 +204,7 @@ class App {
     public static function render(string $view, $data=[]): void {
         $model['data'] = $data;
         $model['path'] = self::getPath();
+        $model['csrf'] = self::generateCSRFToken();
         $view = str_replace('.', '/', $view);
         require __DIR__ . "/../../pages/{$view}.php";
     }

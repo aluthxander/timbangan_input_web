@@ -27,6 +27,7 @@
         </div>
     </div>
     <form class="card w-50" style="max-width: 400px;" method="POST">
+        <input type="hidden" name="csrf_token" value="<?= $model['csrf'] ?>">
         <div class="card-body">
             <h4 class="card-title text-center mb-5 mt-4">Login</h4>
             <?php
@@ -79,11 +80,13 @@ document.querySelector('.btn-submit-login').addEventListener('click', function()
         return;
     }
     this.disabled = true;
-
+    let token = $('input[name="csrf_token"]').val();
+    
     fetch('./routes/api.php?route=login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token  // Tambahkan token ke header
         },
         body: JSON.stringify({
             email: email,
@@ -97,8 +100,6 @@ document.querySelector('.btn-submit-login').addEventListener('click', function()
         return response.json(); // Mengonversi response ke JSON
     })
     .then(res => {
-        console.log(res);
-        
         this.disabled = false;
         const invalidFeedback = document.querySelector('.password-form .invalid-feedback');
         if (invalidFeedback) {
@@ -130,6 +131,7 @@ document.querySelector('.btn-submit-login').addEventListener('click', function()
         }
     })
     .catch(error => {
+        this.disabled = false;
         console.error('Fetch error:', error);
     });
 });
