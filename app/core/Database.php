@@ -32,12 +32,12 @@ class Database{
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
 
-        $this->connection = new PDO($dsn, $user, $pass, $options);
-        // try {
-        // } catch (PDOException $e) {
-        //     $this->handleError("Database Connection Failed: " . $e->getMessage());
-        //     $this->connection = null;
-        // }
+        try {
+            $this->connection = new PDO($dsn, $user, $pass, $options);
+        } catch (PDOException $e) {
+            $this->handleError("Database Connection Failed: " . $e->getMessage());
+            $this->connection = null;
+        }
     }
 
     public function getConnection(){
@@ -51,5 +51,20 @@ class Database{
             $this->logger->error($message); // Simpan error ke log dengan Monolog
             die("<b>Database Error:</b> $message");
         }
+    }
+
+    // Begin Transaction
+    public function beginTransaction() {
+        $this->connection->beginTransaction();
+    }
+
+    // Commit Transaction
+    public function commit() {
+        $this->connection->commit();
+    }
+
+    // Rollback Transaction
+    public function rollBack() {
+        $this->connection->rollBack();
     }
 }
