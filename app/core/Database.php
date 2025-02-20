@@ -32,12 +32,12 @@ class Database{
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
 
-        try {
-            $this->connection = new PDO($dsn, $user, $pass, $options);
-        } catch (PDOException $e) {
-            $this->handleError("Database Connection Failed: " . $e->getMessage());
-            $this->connection = null;
-        }
+        $this->connection = new PDO($dsn, $user, $pass, $options);
+        // try {
+        // } catch (PDOException $e) {
+        //     $this->handleError("Database Connection Failed: " . $e->getMessage());
+        //     $this->connection = null;
+        // }
     }
 
     public function getConnection(){
@@ -67,8 +67,9 @@ class Database{
     public function rollBack() {
         $this->connection->rollBack();
     }
-
+    // insert data
     public function insert( $table, $data) {
+        $sql = '';
         try {
             // Menyiapkan kolom dan nilai yang akan dimasukkan
             $columns = implode(", ", array_keys($data));  // Menyusun nama kolom
@@ -104,7 +105,7 @@ class Database{
 
         } catch (PDOException $e) {
             // Menangani error jika terjadi kesalahan pada eksekusi query
-            App::logger('error', $e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
+            App::logger('error', $e->getMessage(), ['sql' => $sql, 'file' => $e->getFile(), 'line' => $e->getLine()]);
             return [
                 'status'=>false, 
                 'message'=>$this->mapErrorMessage($e->getCode(), $e->getMessage()), 
@@ -130,4 +131,117 @@ class Database{
 
         return $errorMessages[$errorCode] ?? "Terjadi kesalahan: " . $defaultMessage;
     }
+
+    // update data
+    public function update($table, $data, $where = []) {
+        try {
+            // Pastikan data tidak kosong
+            if (empty($data)) {
+                return [
+                    'status' => false,
+                    'message' => 'Data yang akan diupdate tidak boleh kosong'
+                ];
+            }
+    
+            // Menyusun bagian SET dari query dengan placeholder
+            $setPart = implode(", ", array_map(fn($key) => "$key = :$key", array_keys($data)));
+    
+            // Jika $where tidak kosong, susun bagian WHERE, jika kosong update semua data
+            $wherePart = empty($where) ? "" : " WHERE " . implode(" AND ", array_map(fn($key) => "$key = :where_$key", array_keys($where)));
+    
+            // Membuat query update
+            $sql = "UPDATE {$table} SET $setPart$wherePart";
+    
+            // Persiapkan query
+            $stmt = $this->getConnection()->prepare($sql);
+    
+            // Binding nilai untuk kolom yang diupdate
+            foreach ($data as $key => $value) {
+                $stmt->bindValue(":$key", $value);
+            }
+    
+            // Binding nilai untuk kondisi WHERE (jika ada)
+            if (!empty($where)) {
+                foreach ($where as $key => $value) {
+                    $stmt->bindValue(":where_$key", $value);
+                }
+            }
+    
+            // Eksekusi query
+            if ($stmt->execute()) {
+                return [
+                    'status' => true,
+                    'message' => 'Success',
+                    'affected_rows' => $stmt->rowCount(), // Mengembalikan jumlah baris yang terupdate
+                    'sql' => $sql
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'code' => $stmt->errorCode(),
+                    'message' => $this->mapErrorMessage($stmt->errorCode(), $stmt->errorInfo()),
+                    'sql' => $sql
+                ];
+            }
+    
+        } catch (PDOException $e) {
+            // Menangani error jika terjadi kesalahan pada eksekusi query
+            App::logger('error', $e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
+            return [
+                'status' => false,
+                'message' => $this->mapErrorMessage($e->getCode(), $e->getMessage()),
+                'code' => $e->getCode(),
+                'sql' => $sql
+            ];
+        }
+    }
+
+    // delete data
+    public function delete($table, $where = []) {
+        try {
+            // Jika $where tidak kosong, susun bagian WHERE, jika kosong delete semua data
+            $wherePart = empty($where) ? "" : " WHERE " . implode(" AND ", array_map(fn($key) => "$key = :where_$key", array_keys($where)));
+            
+            // Query SQL untuk melakukan delete
+            $sql = "DELETE FROM {$table}{$wherePart}";
+
+            // Persiapkan query
+            $stmt = $this->getConnection()->prepare($sql);
+
+            // Binding data ke placeholder
+            if (!empty($where)) {
+                foreach ($where as $key => $value) {
+                    $stmt->bindValue(":where_$key", $value);
+                }
+            }
+
+            // Eksekusi query
+            if ($stmt->execute()) {
+                return [
+                    'status'=>true, 
+                    'message'=>'Success',
+                    'sql'=>$sql
+                ];  
+            } else {
+                return [
+                    'status'=>false, 
+                    'code'=>$stmt->errorCode(), 
+                    'message'=>$this->mapErrorMessage($stmt->errorCode(), $stmt->errorInfo()), 
+                    'sql'=>$sql
+                ];  
+            }
+
+        } catch (PDOException $e) {
+            // Menangani error jika terjadi kesalahan pada eksekusi query
+            App::logger('error', $e->getMessage(), ['file' => $e->getFile(), 'line' => $e->getLine()]);
+            return [
+                'status'=>false, 
+                'message'=>$this->mapErrorMessage($e->getCode(), $e->getMessage()), 
+                'code'=>$e->getCode(), 
+                'sql'=>$sql
+            ];
+        }
+    }
+
+    // select data dengan join
 }

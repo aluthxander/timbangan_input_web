@@ -66,4 +66,14 @@ class PositionAccessModel{
         $result = $this->db->insert($this->table, $data);
         return $result;
     }
+
+    public function update($data, $where) {
+        $result = $this->db->update($this->table, $data, $where);
+        return $result;
+    }
+
+    public function delete($where){
+        $result = $this->db->delete($this->table, $where);
+        return $result;
+    }
 }

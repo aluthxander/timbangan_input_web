@@ -6,6 +6,7 @@ use Ltech\WebTimbangan\core\Database;
 
 class UserModel {
     private $db;
+    private $table = 'users';
 
     public function __construct(){
         $this->db = new Database();
@@ -16,7 +17,7 @@ class UserModel {
             if (empty($this->db->getConnection())) {
                 throw new \Exception('Database connection is null');
             }
-            $sql = "SELECT * FROM users WHERE username = :username OR email = :email;";
+            $sql = "SELECT * FROM {$this->table} WHERE username = :username OR email = :email;";
             $stmt = $this->db->getConnection()->prepare($sql);
             $stmt->execute(['username' => $username, 'email' => $username]);
             return $stmt->fetch();
@@ -31,7 +32,7 @@ class UserModel {
             if (empty($this->db->getConnection())) {
                 throw new \Exception('Database connection is null');
             }
-            $sql = "SELECT COUNT(*) FROM users;";
+            $sql = "SELECT COUNT(*) FROM {$this->table};";
             return  $this->db->getConnection()->query($sql)->fetchColumn();
         } catch (\Throwable $th) {
             App::logger('error', $th->getMessage(), ['file'=>$th->getFile(), 'line'=>$th->getLine()]);
@@ -41,13 +42,31 @@ class UserModel {
 
     public function getUsers(){
         try {
+            $jabatan = new JabatanModel();
+            $tablename = $jabatan::TABLE_NAME;
+
             $sql = "SELECT a.*,  b.jabatan
-                    FROM users a
-                    INNER JOIN jabatan b ON a.jabatan_id = b.id;";
+                    FROM {$this->table} a
+                    INNER JOIN {$tablename} b ON a.jabatan_id = b.id;";
             return $this->db->getConnection()->query($sql)->fetchAll();
         } catch (\Throwable $th) {
             App::logger('error', $th->getMessage(), ['file'=>$th->getFile(), 'line'=>$th->getLine()]);
             return [];
         }
+    }
+
+    public function insert($data) {
+        $result = $this->db->insert($this->table, $data);
+        return $result;
+    }
+
+    public function update($data, $where) {
+        $result = $this->db->update($this->table, $data, $where);
+        return $result;
+    }
+
+    public function delete($where){
+        $result = $this->db->delete($this->table, $where);
+        return $result;
     }
 }

@@ -48,6 +48,8 @@ require './pages/templates/header.php';
     </div>
 </div>
 <script>
+let token = $('input[name="csrf_token"]').val();
+
 function initialTablePositions() {
     $('.table-positions').DataTable({
         ajax: "./routes/api.php?route=positions",
@@ -74,23 +76,25 @@ function initialTablePositions() {
                     data.forEach(el => {
                         let el_span = '';
                         // looping data menu yang bisa di akses
-                        if (el.read) {
+                        if (el.read_access) {
                             el_span += `<span class="badge bg-primary me-1">Read</span>`;
                         }
     
-                        if (el.create) {
+                        if (el.create_access) {
                             el_span += `<span class="badge bg-primary me-1">Create</span>`;
                         }
     
-                        if (el.update) {
+                        if (el.update_access) {
                             el_span += `<span class="badge bg-primary me-1">Update</span>`;
                         }
     
-                        if (el.delete) {
+                        if (el.delete_access) {
                             el_span += `<span class="badge bg-primary me-1">Delete</span>`;
                         }
-                        
-                        el_li += `<li class="list-group-item">${el.menu} : ${el_span}</li>`;
+                        // jika read, create, update, delete ada yang 1 maka tampilkan
+                        if (el.read_access || el.create_access || el.update_access || el.delete_access) {
+                            el_li += `<li class="list-group-item">${el.menu} : ${el_span}</li>`;
+                        }
                     });
 
                     el = `<ul class="list-group">${el_li}</ul>`;
@@ -102,8 +106,8 @@ function initialTablePositions() {
                 title: "",
                 render: function (data, type, row, meta) {
                     let el = `
-                        <button class="btn btn-primary btn-edit-positions" data-id="${data}"><i class="fa fa-edit"></i></button>
-                        <button class="btn btn-danger btn-delete-positions" data-id="${data}"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-primary btn-edit-positions" onclick="edit_positions(${data}, '${row['jabatan']}')"><i class="fa fa-edit"></i></button>
+                        <button class="btn btn-danger btn-delete-positions" onclick="delete_positions(${data}, '${row['jabatan']}')"><i class="fa fa-trash"></i></button>
                     `;
 
                     // munculkan selain admin
@@ -240,11 +244,13 @@ function initialTableAccess() {
             $('.check-crud').on('click', function() {
                 let menu = $(this).data('menu');
                 let stsRead = false;
+                let stsAccessAll = false;
                 $(`.check-${menu}:not(.read-only)`).each(function(i, el) {
                     if ($(el).is(':checked')) {
                         stsRead = true;
                     }
                 });
+
                 // jika checked maka read akan tercheck
                 if (stsRead) {
                     $(`.read-only.check-${menu}`).prop('checked', true);
@@ -264,6 +270,66 @@ function initialTableAccess() {
         paging: false, // Aktifkan paginasi
     });
 }
+
+function delete_positions(data, jabatan) {
+    Swal.fire({
+        title: 'Delete Position',
+        html: "Are you sure want to Delete <b>" + jabatan + "</b> Position?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: './routes/api.php?route=positions&id=' + data,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    
+                    if (response.status == 200) {
+                        initialTablePositions();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }else if(response.status == 400){
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Failed',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }else{
+            return false;
+        }
+    });
+}
+
 
 // dom menggunakan jquery
 $(document).ready(function() {
@@ -306,8 +372,6 @@ $(document).ready(function() {
             }
         });
 
-        // ambil csrf
-        let token = $('input[name="csrf_token"]').val();
         $.ajax({
             url: './routes/api.php?route=positions',
             type: 'POST',
@@ -318,11 +382,45 @@ $(document).ready(function() {
                 position: position,
                 data: JSON.stringify(dataJson),
             },
+            beforeSend: function() {
+                $('.btn-save-positions').prop('disabled', true);
+            },
             success: function(response) {
                 console.log(response);
                 initialTablePositions();
-                // $('.positions-form').hide();
-                // $('.positions').show();
+                $('.btn-save-positions').prop('disabled', false);
+                if (response.status == 200) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    $('.positions-form').hide();
+                    $('.positions').show();
+                }else if (response.status == 400) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Add Position Failed',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Add Position Failed',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                $('.btn-save-positions').prop('disabled', false);
             }
         })
     });

@@ -7,6 +7,7 @@ use Ltech\WebTimbangan\core\Database;
 class JabatanModel{
     private $db;
     private $table = "jabatan";
+    const TABLE_NAME = "jabatan";
     public function __construct(){
         $this->db = new Database();
     }
@@ -26,6 +27,16 @@ class JabatanModel{
 
     public function insert($data) {
         $result = $this->db->insert($this->table, $data);
+        return $result;
+    }
+
+    public function update($data, $where) {
+        $result = $this->db->update($this->table, $data, $where);
+        return $result;
+    }
+
+    public function delete($where){
+        $result = $this->db->delete($this->table, $where);
         return $result;
     }
 }
