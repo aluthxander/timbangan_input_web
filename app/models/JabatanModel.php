@@ -6,10 +6,13 @@ use Ltech\WebTimbangan\core\Database;
 
 class JabatanModel{
     private $db;
-    private $table = "jabatan";
-    const TABLE_NAME = "jabatan";
+    protected $table = "jabatan";
     public function __construct(){
         $this->db = new Database();
+    }
+
+    public function getTable(){
+        return $this->table;
     }
     public function getJabatan($column = ['*'], $where = []){
         try{

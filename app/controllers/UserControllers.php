@@ -21,10 +21,9 @@ class UserControllers
     }
 
     public function index(){
-        $dataJab = $this->modelJab->getJabatan();
-        // ambil data yang dibutuhkan
-        $dataJab = array_map(fn($dataJab) => array_intersect_key($dataJab, array_flip(['id', 'jabatan'])), $dataJab);
-
+        $dataJab = $this->modelJab->getJabatan(['id', 'jabatan'])['data'];
+        // hilangkan untuk jabatan admin
+        $dataJab = array_filter($dataJab, fn($jabatan) => $jabatan['jabatan'] != 'admin');
         App::render('users.index', $dataJab);
     }
 

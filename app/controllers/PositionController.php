@@ -66,7 +66,7 @@ class PositionController{
             $menu = new MenuModel();
             $menu = $menu->getMenu(['id','menu']);
             $menu = array_filter($menu, function($menu){
-                return $menu['menu'] !== 'Positions & Access' && $menu['menu'] !== 'Home';
+                return $menu['id'] !== 5 && $menu['id'] !== 1;
             });
     
             // Reset array keys agar indeks tetap berurutan

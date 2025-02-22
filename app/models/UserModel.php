@@ -17,7 +17,7 @@ class UserModel {
             if (empty($this->db->getConnection())) {
                 throw new \Exception('Database connection is null');
             }
-            $sql = "SELECT * FROM {$this->table} WHERE username = :username OR email = :email;";
+            $sql = "SELECT username, email, `password`, `name`, phone, jabatan_id FROM {$this->table} WHERE username = :username OR email = :email;";
             $stmt = $this->db->getConnection()->prepare($sql);
             $stmt->execute(['username' => $username, 'email' => $username]);
             return $stmt->fetch();
@@ -43,7 +43,7 @@ class UserModel {
     public function getUsers(){
         try {
             $jabatan = new JabatanModel();
-            $tablename = $jabatan::TABLE_NAME;
+            $tablename = $jabatan->getTable();
 
             $sql = "SELECT a.*,  b.jabatan
                     FROM {$this->table} a

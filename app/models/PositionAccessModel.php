@@ -45,8 +45,9 @@ class PositionAccessModel{
             $sql = "SELECT {$columnList} 
                     FROM {$this->table}
                     INNER JOIN menu_web ON menu_web.id = position_access.menu_id
+                    INNER JOIN jabatan ON jabatan.id = position_access.position_id
                     {$where}
-                    ORDER BY menu_web.menu ASC;";
+                    ORDER BY menu_web.id;";
             // Prepared statement untuk keamanan
             $stmt = $this->db->getConnection()->prepare($sql);
             foreach ($params as $key => &$value) {
