@@ -86,6 +86,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $position = new PositionController();
         $position->deletePosition();
     }
+}elseif ($_SERVER['REQUEST_METHOD'] == 'PUT'){
+    $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+    if (!App::validateCSRFToken($token)) {
+        // Token tidak valid, hentikan eksekusi
+        http_response_code(403);
+        echo json_encode(["error" => "Invalid CSRF token"]);
+        exit;
+    }
+    
+    if ($route == 'positions') {
+        ApiMiddleWare::auth();
+        $position = new PositionController();
+        $position->updatePosition();
+    }
 }else{
     http_response_code(405);
     echo json_encode([

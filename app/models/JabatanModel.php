@@ -11,17 +11,48 @@ class JabatanModel{
     public function __construct(){
         $this->db = new Database();
     }
-    public function getJabatan($column = ['*']){
+    public function getJabatan($column = ['*'], $where = []){
         try{
             if (empty($this->db->getConnection())) {
                 throw new \Exception('Database connection is null');
             }
             $column = implode(",", $column);
-            $sql = "SELECT {$column} FROM {$this->table} ORDER BY jabatan ASC;";
-            return $this->db->getConnection()->query($sql)->fetchAll();
+            $sql = "SELECT {$column} FROM {$this->table}";
+            
+            if (!empty($where)) {
+                $conditions = [];
+                $params = [];
+                foreach ($where as $key => $value) {
+                    $conditions[] = "$key = :$key";
+                    $params[$key] = $value;
+                }
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+            
+            $sql .= " ORDER BY jabatan ASC;";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            if (!empty($params)) {
+                $stmt->execute($params);
+            } else {
+                $stmt->execute();
+            }
+            
+            return [
+                'status'=>true, 
+                'code'=>$stmt->errorCode(), 
+                'data'=>$stmt->fetchAll(),
+                'message'=>"Get data jabatan success", 
+                'sql'=>$sql
+            ];  
         }catch (\Throwable $th) {
             App::logger('error', $th->getMessage(), ['file'=>$th->getFile(), 'line'=>$th->getLine()]);
-            return [];
+            return [
+                'status'=>false, 
+                'code'=>$th->getCode(), 
+                'data'=>[],
+                'message'=>$th->getMessage(), 
+                'sql'=>$sql
+            ];
         }
     }
 

@@ -28,6 +28,7 @@ require './pages/templates/header.php';
         <div class="col-sm-6">
             <div class="mb-3">
                 <input type="hidden" name="csrf_token" value="<?= $model['csrf'] ?>">
+                <input type="hidden" name="id-position" id="id-position">
                 <label for="nama-position" class="form-label">Position</label>
                 <input type="text" class="form-control" id="nama-position" name="nama-position">
             </div>
@@ -43,6 +44,9 @@ require './pages/templates/header.php';
             </button>
             <button class="btn btn-primary btn-save-positions">
                 <i class="fa fa-save"></i> Save
+            </button>
+            <button class="btn btn-primary btn-update-positions d-none">
+                <i class="fa fa-edit"></i> Edit
             </button>
         </div>
     </div>
@@ -131,9 +135,112 @@ function initialTablePositions() {
     });
 }
 
-function initialTableAccess() {
+function delete_positions(data, jabatan) {
+    Swal.fire({
+        title: 'Delete Position',
+        html: "Are you sure want to Delete <b>" + jabatan + "</b> Position?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: './routes/api.php?route=positions&id=' + data,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+                    
+                    if (response.status == 200) {
+                        initialTablePositions();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }else if(response.status == 400){
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Failed',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }else{
+            return false;
+        }
+    });
+}
+
+function edit_positions(data, jabatan) {
+    $.ajax({
+        url: './routes/api.php?route=positions&id=' + data,
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            if (response.status == 200) {
+                $('.positions').hide();
+                $('.positions-form').show();
+                $('#nama-position').val(response.data.jabatan);
+                $('#id-position').val(response.data.id);
+                $('.btn-update-positions').removeClass('d-none');
+                $('.btn-save-positions').addClass('d-none');
+                initialTableAccess(response.data.id);
+            }else if(response.status == 400){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Failed',
+                    text: response.message,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log(xhr.responseText);
+        }
+    });
+}
+
+function initialTableAccess(data = null) {
+    let url = './routes/api.php?route=access';
+    // jika data tidak null
+    if (data != null) {
+        url = './routes/api.php?route=access&position=' + data;
+    }
+
     $('.table-access').DataTable({
-        ajax: "./routes/api.php?route=access",
+        ajax: url,
         info: false,
         paging: false,
         columns: [
@@ -271,65 +378,6 @@ function initialTableAccess() {
     });
 }
 
-function delete_positions(data, jabatan) {
-    Swal.fire({
-        title: 'Delete Position',
-        html: "Are you sure want to Delete <b>" + jabatan + "</b> Position?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: './routes/api.php?route=positions&id=' + data,
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': token
-                },
-                dataType: 'json',
-                success: function (response) {
-                    console.log(response);
-                    
-                    if (response.status == 200) {
-                        initialTablePositions();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }else if(response.status == 400){
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Failed',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }else{
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log(xhr.responseText);
-                }
-            });
-        }else{
-            return false;
-        }
-    });
-}
-
 
 // dom menggunakan jquery
 $(document).ready(function() {
@@ -338,6 +386,8 @@ $(document).ready(function() {
 
     $('.btn-add-positions').on('click', function() {
         initialTableAccess();
+        $('.btn-update-positions').addClass('d-none');
+        $('.btn-save-positions').removeClass('d-none');
         $('#nama-position').val('');
         $('.positions').hide();
         $('.positions-form').show();
@@ -386,7 +436,6 @@ $(document).ready(function() {
                 $('.btn-save-positions').prop('disabled', true);
             },
             success: function(response) {
-                console.log(response);
                 initialTablePositions();
                 $('.btn-save-positions').prop('disabled', false);
                 if (response.status == 200) {
@@ -422,9 +471,86 @@ $(document).ready(function() {
                 console.error(xhr.responseText);
                 $('.btn-save-positions').prop('disabled', false);
             }
-        })
+        });
     });
 
+    $('.btn-update-positions').on('click', function() {
+        // ambil data input position
+        let id = $('#id-position').val();
+        let position = $('#nama-position').val();
+        let check_menu = $('.form-check-input');
+        let dataJson = {};
+        dataJson['menu'] = {};
+        dataJson['position'] = position;
+        dataJson['id'] = id;
+        check_menu.each(function() {
+            let menu = $(this).data('menu'); // Ambil data-menu
+            let name = $(this).attr('name'); // Ambil atribut name
+            let access = name.split('-')[0]; // Ambil bagian sebelum "-"
+
+            // Pastikan dataJson[menu] ada, jika belum inisialisasi sebagai array
+            if (!dataJson['menu'][menu]) {
+                dataJson['menu'][menu] = [];
+            }
+            if (access !== 'all') {
+                // Tambahkan akses ke dalam array
+                dataJson['menu'][menu].push({
+                    access: access,  // Simpan jenis akses (read, create, update, delete)
+                    value: $(this).is(':checked') // Simpan nilai checkbox (biasanya 1/0 atau true/false)
+                });
+            }
+        });
+        console.log(dataJson);
+        
+        $.ajax({
+            url: './routes/api.php?route=positions',
+            type: 'PUT',
+            headers: {
+                'X-CSRF-TOKEN': token  // Tambahkan token ke header
+            }, 
+            data: JSON.stringify(dataJson),
+            dataType: 'json',
+            beforeSend: function() {
+                $('.btn-update-positions').prop('disabled', true);
+            },
+            success: function(response) {
+                initialTablePositions();
+                $('.btn-update-positions').prop('disabled', false);
+                if (response.status == 200) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                    $('.positions-form').hide();
+                    $('.positions').show();
+                }else if (response.status == 400) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Failed',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                $('.btn-update-positions').prop('disabled', false);
+            }
+        });
+    });
 });
 
 </script>
