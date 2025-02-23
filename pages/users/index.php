@@ -6,12 +6,15 @@ require './pages/templates/header.php';
         <div class="col-12 d-flex justify-content-between align-items-center">
             <h1 class="fw-bold">Users</h1>
             <div class="d-flex">
-                <button class="btn btn-primary btn-option-position ms-2">
-                    <i class="fas fa-cogs"></i> Position
-                </button>
-                <button class="btn btn-primary btn-add-users ms-2">
-                    <i class="fas fa-plus"></i> Add User
-                </button>
+                <?php
+                foreach ($_SESSION['user']['access'] as $menu) {
+                    if ($menu['menu'] == 'users' && $menu['create_access']) {
+                        echo '<button class="btn btn-primary btn-add-users ms-2">
+                                <i class="fas fa-plus"></i> Add User
+                            </button>';
+                    }
+                }
+                ?>
                 <button class="btn btn-outline-secondary ms-2">
                     <i class="fas fa-file-export"></i> Export
                 </button>

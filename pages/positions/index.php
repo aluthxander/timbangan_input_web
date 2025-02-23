@@ -155,8 +155,6 @@ function delete_positions(data, jabatan) {
                 },
                 dataType: 'json',
                 success: function (response) {
-                    console.log(response);
-                    
                     if (response.status == 200) {
                         initialTablePositions();
                         Swal.fire({
@@ -203,6 +201,7 @@ function edit_positions(data, jabatan) {
             if (response.status == 200) {
                 $('.positions').hide();
                 $('.positions-form').show();
+                $('.positions-form .row h1').text('Edit Position');
                 $('#nama-position').val(response.data.jabatan);
                 $('#id-position').val(response.data.id);
                 $('.btn-update-positions').removeClass('d-none');
@@ -388,6 +387,7 @@ $(document).ready(function() {
         initialTableAccess();
         $('.btn-update-positions').addClass('d-none');
         $('.btn-save-positions').removeClass('d-none');
+        $('.positions-form .row h1').text('Add New Position');
         $('#nama-position').val('');
         $('.positions').hide();
         $('.positions-form').show();
@@ -500,7 +500,6 @@ $(document).ready(function() {
                 });
             }
         });
-        console.log(dataJson);
         
         $.ajax({
             url: './routes/api.php?route=positions',
