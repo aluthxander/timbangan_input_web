@@ -1,5 +1,7 @@
 <?php 
 error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -13,6 +15,7 @@ use Ltech\WebTimbangan\controllers\ItemController;
 use Ltech\WebTimbangan\controllers\HomeController;
 use Ltech\WebTimbangan\controllers\PositionController;
 use Ltech\WebTimbangan\controllers\TransactionController;
+use Ltech\WebTimbangan\middleware\AdminMiddleWare;
 use Ltech\WebTimbangan\middleware\ApiMiddleWare;
 
 $route = isset($_GET['route']) ? $_GET['route'] : '';
@@ -26,6 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $user = new UserControllers();
         $user->getAllUsers();
+    } elseif ($route == 'user') {
+        ApiMiddleWare::auth();
+        $user = new UserControllers();
+        $user->getUser();
     }  elseif ($route == 'items') {
         ApiMiddleWare::auth();
         $items = new ItemController();
@@ -65,6 +72,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $position = new PositionController();
         $position->savePosition();
+    } elseif ($route == 'users') {
+        ApiMiddleWare::auth();
+        $user = new UserControllers();
+        $user->saveUser();
+    } elseif ($route == 'verify-status') {
+        ApiMiddleWare::auth();
+        $user = new UserControllers();
+        $user->verifyUserAccess();
+    } elseif ($route == 'delete-permanently') {
+        $adminMiddleware = new AdminMiddleWare();
+        $adminMiddleware->before();
+        $user = new UserControllers();
+        $user->verifyUserAccess('permanently');
+    } elseif ($route == 'verify-admin') {
+        $adminMiddleware = new AdminMiddleWare();
+        $adminMiddleware->before();
+        $user = new UserControllers();
+        $user->varifyAdminAccess();
+    } elseif ($route =='change-password') {
+        $adminMiddleware = new AdminMiddleWare();
+        $adminMiddleware->before();
+        $user = new UserControllers();
+        $user->changePassword();
     } else {
         http_response_code(404);
         echo json_encode([
@@ -99,6 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $position = new PositionController();
         $position->updatePosition();
+    }elseif ($route == 'users') {
+        ApiMiddleWare::auth();
+        $user = new UserControllers();
+        $user->updateUser();
     }
 }else{
     http_response_code(405);

@@ -101,19 +101,6 @@ class App {
         return preg_replace('/[^a-zA-Z0-9]/', '', $string);
     }
     
-    // Metode untuk membersihkan dan memvalidasi email
-    public static function cleanAndValidateEmail($email) {
-        // Sanitasi email untuk menghapus karakter yang tidak diinginkan
-        $sanitizedEmail = filter_var($email, FILTER_SANITIZE_EMAIL);
-        
-        // Validasi format email
-        if (filter_var($sanitizedEmail, FILTER_VALIDATE_EMAIL)) {
-            return $sanitizedEmail;
-        } else {
-            return false; // Email tidak valid
-        }
-    }
-    
     public static function cleanAndConvertToNumber($inputString, $type = 'int') {
         // Hapus karakter selain angka dan titik (untuk float)
         $filteredString = preg_replace("/[^0-9.]/", "", $inputString);
@@ -145,20 +132,6 @@ class App {
         $data = str_replace('.', '', $data);
         $data = str_replace(',', '.', $data);
         return self::cleanAndConvertToNumber($data, 'float');
-    }
-    
-    // Metode untuk memfilter password
-    public static function filterPassword($password) {
-        if (strlen($password) < 8) {
-            return false;
-        }
-
-        $containsUppercase = preg_match('/[A-Z]/', $password);
-        $containsLowercase = preg_match('/[a-z]/', $password);
-        $containsNumber = preg_match('/[0-9]/', $password);
-        $containsSpecialChar = preg_match('/[!@#$%^&*(),.?":{}|<>]/', $password);
-
-        return $containsUppercase && $containsLowercase && $containsNumber && $containsSpecialChar;
     }
     
     /**
@@ -225,6 +198,22 @@ class App {
         $path = $_SERVER['PATH_INFO'] ?? '/';
         $path = explode('/', $path)[1] ?? '/';
         return $path;
+    }
+
+    public static function getAccesUser($menuAccess): array {
+        // kecualiakan jabatan admin dan tambahkan access edit dan delete
+        $access = null;
+        foreach ($_SESSION['user']['access'] as $menu) {
+            if ($menu['menu'] == $menuAccess) {
+                $access = $menu;
+                break;
+            }
+        }
+        return $access;
+    }
+
+    public static function stringChars($string) {
+        return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
 }
 ?>

@@ -23,6 +23,8 @@ CREATE TABLE `users` (
     `remember_token` VARCHAR(100) NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `isdelete` BOOLEAN DEFAULT FALSE,
+    `modified` VARCHAR(255) NOT NULL,
     FOREIGN KEY (`jabatan_id`) REFERENCES `jabatan`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

@@ -90,7 +90,7 @@ class PositionController{
     }
 
     public function savePosition(){
-        $position = App::input('position');
+        $position = App::stringChars(App::input('position'));
         $dataJson = json_decode(App::input('data'), true);
 
         // Validasi input
