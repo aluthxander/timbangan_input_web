@@ -95,6 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $adminMiddleware->before();
         $user = new UserControllers();
         $user->changePassword();
+    } elseif ($route == 'items'){
+        ApiMiddleWare::auth();
+        $items = new ItemController();
+        $items->saveItem();
     } else {
         http_response_code(404);
         echo json_encode([

@@ -66,7 +66,7 @@ class UserModel {
             if (empty($this->db->getConnection())) {
                 throw new \Exception('Database connection is null');
             }
-            $sql = "SELECT COUNT(*) FROM {$this->table};";
+            $sql = "SELECT COUNT(*) FROM {$this->table} WHERE isdelete = 0 AND jabatan_id != 1;";
             return  $this->db->getConnection()->query($sql)->fetchColumn();
         } catch (\Throwable $th) {
             App::logger('error', $th->getMessage(), ['file'=>$th->getFile(), 'line'=>$th->getLine()]);

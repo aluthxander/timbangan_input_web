@@ -77,7 +77,7 @@ require './pages/templates/header.php';
     <div class="col-12">
         <div class="card shadow border-0">
             <div class="card-header bg-transparent py-4">
-                Inputan transaksi hari ini
+                Transaction Today
             </div>
             <div class="card-body">
                 <table class="table table-bordered table-transaction-today"></table>
@@ -111,28 +111,28 @@ $(document).ready(function() {
                         },
                         { 
                             data: 'no_invoice', 
-                            title: 'Nomor Invoice' 
+                            title: 'Invoice Number' 
                         },
                         { 
                             data: 'code_item', 
-                            title: 'Kode Barang' 
+                            title: 'Code Item' 
                         },
                         { 
                             data: 'name_item', 
-                            title: 'Nama Barang',
+                            title: 'Name Item',
                         },
                         { 
                             data: 'style_item', 
-                            title: 'Style Barang' 
+                            title: 'Style' 
                         },
                         { 
                             data: 'size_item', 
-                            title: 'Size Barang',
+                            title: 'Size',
                             className: 'text-center'
                         },
                         { 
                             data: 'weight_item', 
-                            title: 'Berat Barang',
+                            title: 'Weight',
                             className: 'text-center'
                         }
                     ],

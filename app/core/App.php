@@ -102,6 +102,10 @@ class App {
     }
     
     public static function cleanAndConvertToNumber($inputString, $type = 'int') {
+        // hapus karakter .
+        $inputString = str_replace('.', '', $inputString);
+        // merubah karakter , menjadi .
+        $inputString = str_replace(',', '.', $inputString);
         // Hapus karakter selain angka dan titik (untuk float)
         $filteredString = preg_replace("/[^0-9.]/", "", $inputString);
 
