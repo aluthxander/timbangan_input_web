@@ -183,7 +183,7 @@ function delete_positions(data, jabatan) {
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.log(xhr.responseText);
+                    console.error(xhr.responseText);
                 }
             });
         }else{
@@ -226,7 +226,7 @@ function edit_positions(data, jabatan) {
             }
         },
         error: function (xhr, status, error) {
-            console.log(xhr.responseText);
+            console.error(xhr.responseText);
         }
     });
 }

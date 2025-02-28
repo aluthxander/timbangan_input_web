@@ -243,7 +243,7 @@ function delete_users(params) {
                             }
                         },
                         error(xhr){
-                            console.log(xhr.responseText);
+                            console.error(xhr.responseText);
                         }
                     });
                 });
@@ -343,8 +343,6 @@ function change_password(params) {
                                             },
                                             dataType: 'json',
                                             success: function(res) {
-                                                console.log(res);
-                                                
                                                 // jika response 200
                                                 if (res.status == 200) {
                                                     Swal.fire({
@@ -364,7 +362,7 @@ function change_password(params) {
                                                 }
                                             },
                                             error(xhr){
-                                                console.log(xhr.responseText);
+                                                console.error(xhr.responseText);
                                                 Swal.fire({
                                                     icon: 'error',
                                                     title: 'Failed',
@@ -386,7 +384,7 @@ function change_password(params) {
                             }
                         },
                         error(xhr){
-                            console.log(xhr.responseText);
+                            console.error(xhr.responseText);
                         }
                     });
                 });
@@ -427,11 +425,11 @@ function edit_users(params) {
                 $('#jabatan').val(data.jabatan_id);
                 
             }else{
-                console.log(res.message);
+                console.error(res.message);
             }
         },
-        error(xhr){
-            console.log(xhr.responseText);
+        error(xhr, status, error) {
+            console.error(xhr.responseText);
         }
     });
 }
@@ -537,7 +535,7 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                console.log(xhr.responseText);
+                console.error(xhr.responseText);
                 Swal.fire({
                     icon: 'error',
                     title: 'Failed',
@@ -576,7 +574,6 @@ $(document).ready(function() {
                 $('.btn-update-users').prop('disabled', true);
             },
             success: function(res) {
-                console.log(res);
                 $('.btn-update-users').prop('disabled', false);
                 if (res.status == 200) {
                     Swal.fire({
@@ -613,7 +610,7 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                console.log(xhr.responseText);
+                console.error(xhr.responseText);
                 Swal.fire({
                     icon: 'error',
                     title: 'Failed',
@@ -683,7 +680,7 @@ if ($_SESSION['user']['jabatan_id'] == 1) {?>
                                 }
                             },
                             error(xhr){
-                                console.log(xhr.responseText);
+                                console.error(xhr.responseText);
                             }
                         });
                     });

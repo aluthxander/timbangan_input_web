@@ -37,6 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $items = new ItemController();
         $items->getAllItems();
+    } elseif ($route == 'item') {
+        ApiMiddleWare::auth();
+        $items = new ItemController();
+        $items->getItem();
     } elseif($route == 'transaction'){
         ApiMiddleWare::auth();
         $transaction = new TransactionController();
@@ -119,6 +123,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $position = new PositionController();
         $position->deletePosition();
+    }elseif ($route == 'items') {
+        ApiMiddleWare::auth();
+        $items = new ItemController();
+        $items->deleteItem();
     }
 }elseif ($_SERVER['REQUEST_METHOD'] == 'PUT'){
     $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
@@ -137,6 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $user = new UserControllers();
         $user->updateUser();
+    }elseif ($route == 'items') {
+        ApiMiddleWare::auth();
+        $items = new ItemController();
+        $items->updateItem();
     }
 }else{
     http_response_code(405);

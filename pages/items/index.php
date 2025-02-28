@@ -94,6 +94,9 @@ require './pages/templates/header.php';
             <button type="button" class="btn btn-primary btn-save-items">
                 <i class="fa fa-save"></i> Save
             </button>
+            <button type="button" class="btn btn-primary btn-update-items d-none">
+                <i class="fa fa-edit"></i> Edit
+            </button>
         </div>
     </div>
 </form>
@@ -171,6 +174,92 @@ function initialTableItems() {
     });
 }
 
+function delete_items(params) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Delete Item',
+        text: "Are you sure want to delete this item ?",
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        allowOutsideClick: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "./routes/api.php?route=items&id=" + params,
+                method: "DELETE",
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
+                dataType: "JSON",
+                success: function(res) {
+                    if (res.status == 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: res.message
+                        });
+
+                        initialTableItems();
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed',
+                            text: res.message,
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: 'Something went wrong',
+                    });
+                }
+            });
+        }
+    });
+}
+
+function edit_items(params) {
+    $.ajax({
+        url: "./routes/api.php?route=item&id=" + params,
+        method: "GET",
+        dataType: "JSON",
+        success: function(res) {
+            if (res.status == 200) {
+                $('.items').hide();
+                $('.items-form').show();
+                $('.items-form .row h1').text('Edit Item');
+                $('.btn-save-items').addClass('d-none');
+                $('.btn-update-items').removeClass('d-none');
+                $('.items-form').removeClass('was-validated');
+                $(`input.is-invalid`).removeClass('is-invalid');
+                $(`select.is-invalid`).removeClass('is-invalid');
+                // set value to form
+                $('#id-item').val(res.data.id);
+                $('#kodebarang').val(res.data.code);
+                $('#namabarang').val(res.data.name);
+                $('#stylebarang').val(res.data.style);
+                $('#sizebarang').val(res.data.size);
+                $('#beratmin').val(res.data.weight_min);
+                $('#beratmax').val(res.data.weight_max);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed',
+                text: 'Something went wrong',
+            });
+        }
+    });
+}
+
 let beratMin = document.getElementById('beratmin');
 let beratMax = document.getElementById('beratmax');
 // input dari kanan ke kiri
@@ -197,6 +286,8 @@ $(document).ready(function() {
         $('.items-form').removeClass('was-validated');
         $(`input.is-invalid`).removeClass('is-invalid');
         $(`select.is-invalid`).removeClass('is-invalid');
+        $('.btn-save-items').removeClass('d-none');
+        $('.btn-update-items').addClass('d-none');
         // set value to form
         $('#kodebarang').val('');
         $('#namabarang').val('');
@@ -266,10 +357,73 @@ $(document).ready(function() {
                     });
                 }
             },
-            error: function(response) {
-                console.log(response);
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
                 $('.btn-save-items').prop('disabled', false);
                 $('.btn-save-items').html('<i class="fa fa-save"></i> Save');
+            }
+        });
+    });
+
+    $('.btn-update-items').on('click', function() {
+        let form = $('.items-form');
+        // check field required is filled
+        if (!form.get(0).checkValidity()) {
+            form.addClass('was-validated');
+            return false;
+        }
+        // take all value and key from form to json
+        let data = form.serializeArray();
+        let jsonData = {};
+        $.each(data, function(index, value) {
+            jsonData[value.name] = value.value;
+        });
+
+        // send data to api
+        $.ajax({
+            url: "./routes/api.php?route=items",
+            method: "PUT",
+            headers: {
+                'X-CSRF-TOKEN': token
+            },
+            dataType: "JSON",
+            data: JSON.stringify(jsonData),
+            beforeSend: function() {
+                $('.btn-update-items').prop('disabled', true);
+                $('.btn-update-items').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...');
+            },
+            success: function(res) {
+                $('.btn-update-items').prop('disabled', false);
+                $('.btn-update-items').html('<i class="fa fa-edit"></i> Edit');
+                if (res.status == 200) {
+                    $('.items-form').hide();
+                    $('.items').show();
+                    initialTableItems();
+                }else if (res.status == 400) {
+                    // take all error message and show in alert
+                    let errors = res.errors;
+                    let message = '';
+                    for (let key in errors) {
+                        message += errors[key] + '<br>';
+                        $(`.items-form #${key}`).addClass('is-invalid');
+                    }
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Failed',
+                        html: message
+                    });
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: res.message,
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                $('.btn-update-items').prop('disabled', false);
+                $('.btn-update-items').html('<i class="fa fa-edit"></i> Edit');
             }
         });
     });
