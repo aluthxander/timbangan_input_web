@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $user = new UserControllers();
         $user->getUser();
-    }  elseif ($route == 'items') {
+    } elseif ($route == 'items') {
         ApiMiddleWare::auth();
         $items = new ItemController();
         $items->getAllItems();
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $items = new ItemController();
         $items->getItem();
-    } elseif($route == 'transaction'){
+    } elseif ($route == 'transaction'){
         ApiMiddleWare::auth();
         $transaction = new TransactionController();
         $transaction->getAllTransaction();
@@ -53,6 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $position = new PositionController();
         $position->accesPosition();
+    } elseif ($route == 'timbangan'){
+        ApiMiddleWare::auth();
+        $transaction = new TransactionController();
+        $transaction->getResultTimbangan();
+    } elseif ($route == 'transaction-item') {
+        ApiMiddleWare::auth();
+        $transaction = new TransactionController();
+        $transaction->itemCheckByWeight();
     } else {
         http_response_code(404);
         App::response([
@@ -103,6 +111,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $items = new ItemController();
         $items->saveItem();
+    } elseif ($route == 'transaction'){
+        ApiMiddleWare::auth();
+        $transaction = new TransactionController();
+        $transaction->saveTransaction();
     } else {
         http_response_code(404);
         echo json_encode([
@@ -123,10 +135,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $position = new PositionController();
         $position->deletePosition();
-    }elseif ($route == 'items') {
+    } elseif ($route == 'items') {
         ApiMiddleWare::auth();
         $items = new ItemController();
         $items->deleteItem();
+    } elseif ($route == 'transaction') {
+        ApiMiddleWare::auth();
+        $transaction = new TransactionController();
+        $transaction->deleteTransaction();
     }
 }elseif ($_SERVER['REQUEST_METHOD'] == 'PUT'){
     $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';

@@ -25,6 +25,7 @@ require './pages/templates/header.php';
     </div>
 </div>
 <div class="transaction-form pt-5" style="display: none;">
+    <input type="hidden" name="csrf_token" value="<?= $model['csrf'] ?>">
     <div class="row">
         <div class="col-12 d-flex justify-content-start align-items-center">
             <h1 class="fw-bold">Add New Transaction</h1>
@@ -32,64 +33,21 @@ require './pages/templates/header.php';
     </div>
     <div class="row">
         <div class="col-sm-6">
-            <div class="mb-3">
-                <label for="kodebarang" class="form-label">Item Code</label>
-                <input type="text" class="form-control" id="kodebarang" name="kodebarang">
-            </div>
+            <label for="weight" class="form-label">Weight</label>
+            <input type="text" class="form-control" id="weight" name="weight" readonly>
         </div>
-        <div class="col-sm-6">
-            <div class="mb-3">
-                <label for="namabarang" class="form-label">Nama Barang</label>
-                <input type="text" class="form-control" id="namabarang" name="namabarang">
-            </div>
+        <div class="col-sm-6 d-flex align-items-end">
+            <button type="button" class="btn btn-primary btn-calculation me-2">Calculation</button>
+            <button type="button" class="btn btn-secondary btn-back-transaction"><i class="fa fa-chevron-left"></i> Back</button>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
-            <div class="mb-3">
-                <label for="stylebarang" class="form-label">Style</label>
-                <input type="text" class="form-control" id="stylebarang" name="stylebarang">
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="mb-3">
-                <label for="sizebarang" class="form-label">Size</label>
-                <select name="sizebarang" id="sizebarang" class="form-select w-25">
-                    <?php
-                    foreach ($model['data'] as $value) {
-                        echo "<option>{$value['size']}</option>";
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <div class="mb-3">
-                <label for="beratmin" class="form-label">Berat Min.</label>
-                <input type="text" class="form-control" placeholder="0.0000" id="beratmin" name="beratmin">
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="mb-3">
-                <label for="beratmax" class="form-label">Berat Max</label>
-                <input type="text" class="form-control" placeholder="0.0000" id="beratmax" name="beratmax">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12 text-end">
-            <button class="btn btn-secondary btn-back-items me-2">
-                <i class="fa fa-chevron-left"></i> Back
-            </button>
-            <button class="btn btn-primary btn-save-items">
-                <i class="fa fa-save"></i> Save
-            </button>
-        </div>
+        <table class="table table-bordered table-transaction-detail"></table>
     </div>
 </div>
 <script>
+let token = $('input[name="csrf_token"]').val();
+
 function initialTableTransaction() {
     $('.table-transaction').DataTable({
         ajax: "./routes/api.php?route=transaction",
@@ -127,6 +85,14 @@ function initialTableTransaction() {
                 data: 'weight_item', 
                 title: 'Weight',
                 className: 'text-center'
+            },
+            { 
+                data: 'id', 
+                title: null,
+                className: 'text-center',
+                render: function (data, type, row, meta) {
+                    return `<button class="btn btn-sm btn-danger btn-delete-transaction" onclick="deleteTransaction(${data})"><i class="fas fa-trash"></i></button>`;
+                }
             }
         ],
         headerCallback: function (thead, data, start, end, display) {
@@ -231,18 +197,184 @@ async function exportExcel() {
 	document.body.removeChild(link);
 }
 
+function itemCheckByWeight(params){
+    $('.table-transaction-detail').DataTable({
+        ajax: '/routes/api.php?route=transaction-item&weight='+params,
+        columns: [
+            { 
+                data: null,
+                title: "NO",
+                render: function (data, type, row, meta) {
+                    return meta.row + 1;
+                },
+                className: "text-center",
+                width: "5%"
+            },
+            {
+                data: null,
+                title: null,
+                render: function (data, type, row, meta) {
+                    let json = encodeURIComponent(JSON.stringify(row));
+                    return `<button type="button" class="btn btn-sm btn-primary" onclick="itemCheck('${json}')"><i class="fa fa-check"></i></button>`;
+                },
+                className: "text-center",
+                width: "5%"
+            },
+            { 
+                data: 'code', 
+                title: 'Item Code',
+                render: function (data, type, row, meta) {
+                    return `<div class="text-start">${data}</div>`
+                }
+            },
+            { 
+                data: 'name', 
+                title: 'Item Name',
+            },
+            { 
+                data: 'style', 
+                title: 'Style' 
+            },
+            { 
+                data: 'size', 
+                title: 'Size',
+                className: 'text-center'
+            }
+        ],
+        headerCallback: function (thead, data, start, end, display) {
+            $(thead).find('th').css('text-align', 'center');
+            $(thead).find('th').addClass('bg-secondary-subtle');
+        },
+        destroy: true,
+        responsive: true,
+        autoWidth: false,
+        displayLength: 5
+    });
+}
+
+function itemCheck(data) {
+    let jsonData = JSON.parse(decodeURIComponent(data));
+    let weight = $('#weight').val();
+    jsonData['weight'] = weight;
+    
+    $.ajax({
+        url: '/routes/api.php?route=transaction',
+        method: 'POST',
+        dataType: 'json',
+        headers: {
+            'X-CSRF-TOKEN': token
+        },
+        data: jsonData,
+        success: function(res) {
+            console.log(res);
+            if (res.status == 200) {
+                $('.transaction-form').hide();
+                $('.transaction').show();
+                initialTableTransaction();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: res.message
+                });
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed',
+                    text: res.message
+                });
+            }
+        },
+        error: function(xhr, status, err) {
+            console.error(xhr.responseText);
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed',
+                text: "internal server error"
+            })
+        }
+    });
+}
+
+function deleteTransaction(id) {
+    Swal.fire({
+        title: 'Delete Transaction',
+        text: "Are you sure want to delete this transaction?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/routes/api.php?route=transaction',
+                method: 'DELETE',
+                dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': token
+                },
+                data: JSON.stringify({id: id}),
+                success: function(res) {
+                    if (res.status == 200) {
+                        initialTableTransaction();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: res.message
+                        });
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed',
+                            text: res.message
+                        });
+                    }
+                },
+                error: function(xhr, status, err) {
+                    console.error(xhr.responseText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: "internal server error"
+                    })
+                }
+            });
+        }
+    });
+}
 // dom menggunakan jquery
 $(document).ready(function() {
     initialTableTransaction();
 
-    $('.btn-add-items').on('click', function() {
-        $('.items').hide();
-        $('.items-form').show();
+    $('.btn-add-transaction').on('click', function() {
+        $('.transaction').hide();
+        $('.transaction-form').show();
+        $('#weight').val('');
+        itemCheckByWeight('');
     });
 
-    $('.btn-back-items').on('click', function() {
-        $('.items-form').hide();
-        $('.items').show();
+    $('.btn-back-transaction').on('click', function() {
+        $('.transaction-form').hide();
+        $('.transaction').show();
+    });
+
+    $('.btn-calculation').on('click', function() {
+        $.ajax({
+            url: '/routes/api.php?route=timbangan',
+            method: 'GET',
+            dataType: 'json',
+            beforeSend: function() {
+                $('.btn-calculation').prop('disabled', true);
+                $('.btn-calculation').html('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> Loading...');
+            },
+            complete: function(res) {
+                $('.btn-calculation').prop('disabled', false);
+                $('.btn-calculation').html('Calculation');
+                let response = res.responseText;
+                $('#weight').val(response);
+                itemCheckByWeight(response);
+            }
+        })
     });
 
     $('.btn-export').on('click', function() {

@@ -68,7 +68,7 @@ class ItemModel {
             return [
                 'status'=>true,
                 'sql'=>$sql,
-                'message'=>'Take data success',
+                'message'=>'Get data success',
                 'data'=>$stmt->fetchAll()
             ];
         }catch (\Throwable $th) {
@@ -104,6 +104,40 @@ class ItemModel {
         }
 
         return $descWeb;
+    }
+
+    public function getItemByWeight($column = ['*'], $weight = 0){
+        try{
+            if (empty($this->db->getConnection())) {
+                throw new \Exception('Database connection is null');
+            }
+
+            $columns = implode(", ", $column);
+            $sql = "SELECT {$columns} FROM {$this->table} 
+                    WHERE weight_min <= :weight_min AND weight_max >= :weight_max
+                    ORDER BY ABS(weight_max - :weight_max_abs) ASC, ABS(weight_min - :weight_min_abs) ASC;";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->bindParam(":weight_min", $weight);
+            $stmt->bindParam(":weight_max", $weight);
+            $stmt->bindParam(":weight_max_abs", $weight);
+            $stmt->bindParam(":weight_min_abs", $weight);
+            $stmt->execute();
+            return [
+                'status'=>true,
+                'sql'=>$sql,
+                'message'=>'Get data success',
+                'data'=>$stmt->fetchAll()
+            ];
+        }catch (\Throwable $th) {
+            App::logger('error', $th->getMessage(), ['file'=>$th->getFile(), 'line'=>$th->getLine()]);
+            return [
+                'status'=>false,
+                'message'=>$this->db->mapErrorMessage($th->getCode(), $th->getMessage()),
+                'data'=>[],
+                'code'=>$th->getCode(),
+                'sql'=>$sql
+            ];
+        }
     }
 
     public function insert($data){
