@@ -15,7 +15,7 @@ require './pages/templates/header.php';
                     }
                 }
                 ?>
-                <button class="btn btn-outline-secondary ms-2">
+                <button class="btn btn-outline-secondary ms-2 btn-export">
                     <i class="fas fa-file-export"></i> Export
                 </button>
                 <!-- <button class="btn btn-outline-secondary ms-2">
@@ -260,6 +260,98 @@ function edit_items(params) {
     });
 }
 
+async function exportExcel() {
+	let thead1 = $(".table-items thead tr th").map(function() {
+                    let text = $(this).text().trim(); // Ambil teks dan hapus spasi berlebih
+					if (text != '') {
+                        return text;
+                    }
+				}).get();
+    
+	// Tambahkan Header ke Excel
+	// ubah array2 menjadi excel
+	let workbook = new ExcelJS.Workbook();
+	let worksheet = workbook.addWorksheet('Item');
+
+	let baris1 = 1;
+	let indexHdr = 1;
+	// cek apakah tanggalawal sama dengan tanggal akhir
+    // merge cell
+    worksheet.mergeCells(baris1, indexHdr, baris1, indexHdr + thead1.length - 1);
+    worksheet.getCell(baris1, indexHdr).value = "ITEMS REPORT"; // Rata tengah
+    baris1++;
+	// looping untuk membuat merge header
+	thead1.forEach(function (value, index) {
+		// jika index = index.length (mengambil index terakhir) maka colspan
+        worksheet.getCell(baris1, indexHdr).value = value; // Rata tengah
+        worksheet.getCell(baris1, indexHdr).alignment = { horizontal: "center", vertical: "middle" }; // Rata tengah
+		indexHdr++;
+	});
+	// memasukan header ke 2
+	
+	// Buat Style Header
+	let rowHeader = [baris1];
+	rowHeader.forEach((rowNumber) => {
+		worksheet.getRow(rowNumber).eachCell((cell) => {
+			cell.font = { bold: true };
+			cell.fill = {
+				type: 'pattern',
+				pattern: 'solid',
+				fgColor: { argb: '4B8DF8' } // Warna Kuning
+			};
+			// ubah warna text menjadi putih
+			cell.font = { color: { argb: 'FFFFFF' } };
+	
+			// Tambahkan border pada setiap sel header
+			cell.border = {
+				top: { style: 'thin' },
+				left: { style: 'thin' },
+				bottom: { style: 'thin' },
+				right: { style: 'thin' }
+			};
+		});
+	});
+
+	// ambil data dari datatable
+	let table = $('.table-items').DataTable();
+    let data = table.data('all');
+    let dataArray = data.toArray();
+    
+    dataArray.forEach(row => {
+        worksheet.addRow([
+            row.id,
+            row.code,
+            row.name,
+            row.style,
+            row.size,
+            row.weight_min,
+            row.weight_max
+        ]);
+    });
+
+	// menentukan ukuran kolom
+	worksheet.getColumn(1).width = 5; // Kolom A
+	worksheet.getColumn(1).alignment = { horizontal: "center", vertical: "middle" }; // Kolom A
+	worksheet.getColumn(2).width = 35; // Kolom A
+	worksheet.getColumn(3).width = 15; // Kolom A
+	worksheet.getColumn(4).width = 15; // Kolom A
+	worksheet.getColumn(5).width = 18; // Kolom A
+	worksheet.getColumn(6).width = 18; // Kolom A
+	worksheet.getColumn(7).width = 18; // Kolom A
+	
+	// Simpan sebagai Blob
+	let buffer = await workbook.xlsx.writeBuffer();
+	let blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+	// Buat Link untuk Download
+	let link = document.createElement("a");
+	link.href = URL.createObjectURL(blob);
+	link.download = "item_report.xlsx";
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+}
+
 let beratMin = document.getElementById('beratmin');
 let beratMax = document.getElementById('beratmax');
 // input dari kanan ke kiri
@@ -426,6 +518,10 @@ $(document).ready(function() {
                 $('.btn-update-items').html('<i class="fa fa-edit"></i> Edit');
             }
         });
+    });
+
+    $('.btn-export').on('click', function() {
+        exportExcel();
     });
 });
 

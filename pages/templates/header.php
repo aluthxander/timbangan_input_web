@@ -18,6 +18,7 @@
     <script src="./public/assets/vendor/inputmask/imask.js"></script>
     <script src="./public/assets/vendor/sweetalert/sweetalert2@11.js"></script>
     <script src="./public/assets/vendor/chartjs/chart.js"></script>
+    <script src="./public/assets/vendor/excel/exceljs.min.js"></script>
 </head>
 <body id="body-pd" class="body-pd">
 <?php
