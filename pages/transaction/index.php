@@ -7,14 +7,14 @@ require './pages/templates/header.php';
             <h1 class="fw-bold">Transaction</h1>
             <div class="d-flex">
                 <button class="btn btn-primary btn-add-transaction">
-                    <i class="fas fa-plus"></i> Add Item
+                    <i class="fas fa-plus"></i> Add Transaction
                 </button>
-                <button class="btn btn-outline-secondary ms-2">
+                <button class="btn btn-outline-secondary btn-export ms-2">
                     <i class="fas fa-file-export"></i> Export
                 </button>
-                <button class="btn btn-outline-secondary ms-2">
+                <!-- <button class="btn btn-outline-secondary ms-2">
                     <i class="fas fa-filter"></i> Filter
-                </button>
+                </button> -->
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@ require './pages/templates/header.php';
     <div class="row">
         <div class="col-sm-6">
             <div class="mb-3">
-                <label for="kodebarang" class="form-label">Kode Barang</label>
+                <label for="kodebarang" class="form-label">Item Code</label>
                 <input type="text" class="form-control" id="kodebarang" name="kodebarang">
             </div>
         </div>
@@ -47,7 +47,7 @@ require './pages/templates/header.php';
     <div class="row">
         <div class="col-sm-6">
             <div class="mb-3">
-                <label for="stylebarang" class="form-label">Styke</label>
+                <label for="stylebarang" class="form-label">Style</label>
                 <input type="text" class="form-control" id="stylebarang" name="stylebarang">
             </div>
         </div>
@@ -104,35 +104,28 @@ function initialTableTransaction() {
                 width: "5%"
             },
             { 
-                data: 'no_invoice', 
-                title: 'Nomor Invoice',
-                render: function (data, type, row, meta) {
-                    return `<div class="text-start">${data}</div>`
-                }
-            },
-            { 
                 data: 'code_item', 
-                title: 'Kode Barang',
+                title: 'Item Code',
                 render: function (data, type, row, meta) {
                     return `<div class="text-start">${data}</div>`
                 }
             },
             { 
                 data: 'name_item', 
-                title: 'Nama Barang',
+                title: 'Item Name',
             },
             { 
                 data: 'style_item', 
-                title: 'Style Barang' 
+                title: 'Style' 
             },
             { 
                 data: 'size_item', 
-                title: 'Size Barang',
+                title: 'Size',
                 className: 'text-center'
             },
             { 
                 data: 'weight_item', 
-                title: 'Berat Barang',
+                title: 'Weight',
                 className: 'text-center'
             }
         ],
@@ -144,6 +137,98 @@ function initialTableTransaction() {
         responsive: true,
         autoWidth: false,
     });
+}
+
+async function exportExcel() {
+	let thead1 = $(".table-transaction thead tr th").map(function() {
+                    let text = $(this).text().trim(); // Ambil teks dan hapus spasi berlebih
+					if (text != '') {
+                        return text;
+                    }
+				}).get();
+    
+	// Tambahkan Header ke Excel
+	// ubah array2 menjadi excel
+	let workbook = new ExcelJS.Workbook();
+	let worksheet = workbook.addWorksheet('Transaction');
+
+	let baris1 = 1;
+	let indexHdr = 1;
+	// cek apakah tanggalawal sama dengan tanggal akhir
+    // merge cell
+    worksheet.mergeCells(baris1, indexHdr, baris1, indexHdr + thead1.length - 1);
+    worksheet.getCell(baris1, indexHdr).value = "TRANSACTION REPORT"; // Rata tengah
+    baris1++;
+	// looping untuk membuat merge header
+	thead1.forEach(function (value, index) {
+		// jika index = index.length (mengambil index terakhir) maka colspan
+        worksheet.getCell(baris1, indexHdr).value = value; // Rata tengah
+        worksheet.getCell(baris1, indexHdr).alignment = { horizontal: "center", vertical: "middle" }; // Rata tengah
+		indexHdr++;
+	});
+	// memasukan header ke 2
+	
+	// Buat Style Header
+	let rowHeader = [baris1];
+	rowHeader.forEach((rowNumber) => {
+		worksheet.getRow(rowNumber).eachCell((cell) => {
+			cell.font = { bold: true };
+			cell.fill = {
+				type: 'pattern',
+				pattern: 'solid',
+				fgColor: { argb: '4B8DF8' } // Warna Kuning
+			};
+			// ubah warna text menjadi putih
+			cell.font = { color: { argb: 'FFFFFF' } };
+	
+			// Tambahkan border pada setiap sel header
+			cell.border = {
+				top: { style: 'thin' },
+				left: { style: 'thin' },
+				bottom: { style: 'thin' },
+				right: { style: 'thin' }
+			};
+		});
+	});
+
+	// ambil data dari datatable
+	let table = $('.table-transaction').DataTable();
+    let data = table.data('all');
+    let dataArray = data.toArray();
+    
+    dataArray.forEach((row, index) => {
+        worksheet.addRow([
+            index + 1,
+            row.code_item,
+            row.name_item,
+            row.style_item,
+            row.size_item,
+            row.weight_item
+        ]);
+    });
+
+	// menentukan ukuran kolom
+	worksheet.getColumn(1).width = 5; // Kolom A
+	worksheet.getColumn(1).alignment = { horizontal: "center", vertical: "middle" }; // Kolom A
+	worksheet.getColumn(2).width = 15; // Kolom A
+	worksheet.getColumn(3).width = 35; // Kolom A
+	worksheet.getColumn(4).width = 15; // Kolom A
+	worksheet.getColumn(5).width = 15; // Kolom A
+    worksheet.getColumn(5).alignment = { horizontal: "center", vertical: "middle" }; // Kolom A
+	worksheet.getColumn(6).width = 15; // Kolom A
+    worksheet.getColumn(6).alignment = { horizontal: "center", vertical: "middle" }; // Kolom A
+	
+	// Simpan sebagai Blob
+	let buffer = await workbook.xlsx.writeBuffer();
+	let blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+	// Buat Link untuk Download
+	let link = document.createElement("a");
+	link.href = URL.createObjectURL(blob);
+	link.download = "transaction_report.xlsx";
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
 }
 
 // dom menggunakan jquery
@@ -158,6 +243,10 @@ $(document).ready(function() {
     $('.btn-back-items').on('click', function() {
         $('.items-form').hide();
         $('.items').show();
+    });
+
+    $('.btn-export').on('click', function() {
+        exportExcel();
     });
 });
 

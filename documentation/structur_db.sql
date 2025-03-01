@@ -72,7 +72,6 @@ CREATE TABLE size_item (
 
 CREATE TABLE `transaction` (
     `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `no_invoice` VARCHAR(255) NOT NULL UNIQUE,
     `code_item` VARCHAR(255) NOT NULL,
     `name_item` VARCHAR(255) NOT NULL,
     `style_item` VARCHAR(255) NOT NULL,
@@ -81,4 +80,3 @@ CREATE TABLE `transaction` (
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-

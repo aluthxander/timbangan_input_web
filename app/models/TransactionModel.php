@@ -38,18 +38,54 @@ class TransactionModel {
         }
     }
 
-    public function getTransaction($column = ['*']){
+    public function getTransaction($column = ['*'], $where = [])
+    {
         try {
             if (empty($this->db->getConnection())) {
                 throw new \Exception('Database connection is null');
             }
             $column = implode(",", $column);
-            $sql = "SELECT {$column} FROM {$this->table} ORDER BY created_at DESC;";
-            return $this->db->getConnection()->query($sql)->fetchAll();
-
+            
+            $sql = "SELECT {$column} FROM {$this->table}";
+            
+            if (!empty($where)) {
+                $conditions = [];
+                $params = [];
+                foreach ($where as $key => $value) {
+                    $conditions[] = "$key = :$key";
+                    $params[$key] = $value;
+                }
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+            
+            $sql .= " ORDER BY created_at DESC;";
+            
+            $stmt = $this->db->getConnection()->prepare($sql);
+            
+            if (!empty($params)) {
+                foreach ($params as $key => $value) {
+                    $stmt->bindValue(":$key", $value);
+                }
+            }
+            
+            $stmt->execute();
+            return [
+                'status'=>true, 
+                'code'=>$stmt->errorCode(), 
+                'data'=>$stmt->fetchAll(),
+                'sql'=>$sql,
+                'message'=>'Success'
+            ];
+    
         } catch (\Throwable $th) {
             App::logger('error', $th->getMessage(), ['file'=>$th->getFile(), 'line'=>$th->getLine()]);
-            return [];
+            return [
+                'status'=>false, 
+                'code'=>$th->getCode(), 
+                'data'=>[],
+                'sql'=>$sql,
+                'message'=>$th->getMessage()
+            ];
         }
     }
 

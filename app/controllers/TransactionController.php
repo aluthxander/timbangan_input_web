@@ -21,9 +21,10 @@ class TransactionController
 
     public function getAllTransaction()
     {
-        $data = $this->model->getTransaction();
+        $data = $this->model->getTransaction(['code_item', 'name_item', 'size_item', 'style_item', 'weight_item', 'id'])['data'];
         App::response([
             'status' => 200,
+            'message' => 'Get all transaction success',
             'data' => $data
         ]);
     }
