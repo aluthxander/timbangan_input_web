@@ -14,6 +14,7 @@ use Ltech\WebTimbangan\controllers\UserControllers;
 use Ltech\WebTimbangan\controllers\ItemController;
 use Ltech\WebTimbangan\controllers\HomeController;
 use Ltech\WebTimbangan\controllers\PositionController;
+use Ltech\WebTimbangan\controllers\ProfileController;
 use Ltech\WebTimbangan\controllers\TransactionController;
 use Ltech\WebTimbangan\middleware\AdminMiddleWare;
 use Ltech\WebTimbangan\middleware\ApiMiddleWare;
@@ -157,14 +158,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $position = new PositionController();
         $position->updatePosition();
-    }elseif ($route == 'users') {
+    } elseif ($route == 'users') {
         ApiMiddleWare::auth();
         $user = new UserControllers();
         $user->updateUser();
-    }elseif ($route == 'items') {
+    } elseif ($route == 'items') {
         ApiMiddleWare::auth();
         $items = new ItemController();
         $items->updateItem();
+    } elseif ($route == 'profile') {
+        ApiMiddleWare::auth();
+        $user = new ProfileController();
+        $user->updateProfile();
     }
 }else{
     http_response_code(405);

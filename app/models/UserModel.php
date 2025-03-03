@@ -61,6 +61,36 @@ class UserModel {
         }
     }
 
+    public function getUserExcept($find , $except, $column = ['*']) {
+        try {
+            if (empty($this->db->getConnection())) {
+                throw new \Exception('Database connection is null');
+            }
+            $column = implode(",", $column);
+            $keyFind = array_keys($find)[0];
+            $keyExcept = array_keys($except)[0];
+            $sql = "SELECT $column FROM {$this->table} WHERE {$keyFind} = :find AND {$keyExcept} != :id;";
+            $stmt = $this->db->getConnection()->prepare($sql);
+            $stmt->bindParam('find', $find[$keyFind]);
+            $stmt->bindParam('id', $except[$keyExcept]);
+            $stmt->execute();
+            return [ 
+                'status' => true, 
+                'data' => $stmt->fetchAll(),
+                'sql' => $sql,
+                'code' => $stmt->errorCode()
+            ];
+        } catch (\Throwable $th) {
+            App::logger('error', $th->getMessage(), ['file'=>$th->getFile(), 'line'=>$th->getLine()]);
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+                'code' => $th->getCode(),
+                'sql' => $sql
+            ];
+        }
+    }
+
     public function countData(){
         try {
             if (empty($this->db->getConnection())) {

@@ -21,7 +21,7 @@
 </head>
 <body>
 <div class="container-fluid d-flex flex-column justify-content-start align-items-center">
-    <div class="row mb-4 mt-5">
+    <div class="row mb-4 mt-1">
         <div class="col-12 text-center">
             <img src="../../../img/logo/apparel.png" alt="apparel" class="img-fluid" style="max-width: 400px;">
         </div>
@@ -29,7 +29,7 @@
     <form class="card w-50" style="max-width: 400px;" method="POST">
         <input type="hidden" name="csrf_token" value="<?= $model['csrf'] ?>">
         <div class="card-body">
-            <h4 class="card-title text-center mb-5 mt-4">Login</h4>
+            <h4 class="card-title text-center mb-5">Login</h4>
             <?php
             if (isset($_SESSION['alert'])) {
                 echo "<div class='alert alert-{$_SESSION['alert']['type']} alert-dismissible fade show' role='alert'>
