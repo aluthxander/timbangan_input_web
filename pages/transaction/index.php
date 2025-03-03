@@ -91,7 +91,11 @@ function initialTableTransaction() {
                 title: null,
                 className: 'text-center',
                 render: function (data, type, row, meta) {
-                    return `<button class="btn btn-sm btn-danger btn-delete-transaction" onclick="deleteTransaction(${data})"><i class="fas fa-trash"></i></button>`;
+                    if (row.delete) {
+                        return `<button class="btn btn-sm btn-danger btn-delete-transaction" onclick="deleteTransaction(${data})"><i class="fas fa-trash"></i></button>`;
+                    }else{
+                        return '';
+                    }
                 }
             }
         ],

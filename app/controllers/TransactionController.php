@@ -23,7 +23,25 @@ class TransactionController
 
     public function getAllTransaction()
     {
-        $data = $this->model->getTransaction(['code_item', 'name_item', 'size_item', 'style_item', 'weight_item', 'id'])['data'];
+        $result = $this->model->getTransaction(['code_item', 'name_item', 'size_item', 'style_item', 'weight_item', 'id']);
+        if (!isset($result['data'])) {
+            App::response([
+                'status' => 500,
+                'message' => 'Error fetching transaction data',
+            ]);
+            return;
+        }
+        $data = $result['data'];
+    
+        // cek akses
+        $access = App::getAccesUser('transactions');
+        
+        $data = array_map(function ($transaction) use ($access) {
+            $transaction['delete'] = $access['delete_access'];
+            $transaction['accessby'] = $_SESSION['user']['jabatan_id'];
+            return $transaction;
+        }, $data);
+    
         App::response([
             'status' => 200,
             'message' => 'Get all transaction success',
