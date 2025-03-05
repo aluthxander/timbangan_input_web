@@ -12,8 +12,7 @@ require './pages/templates/header.php';
                             <i class='fas fa-trash'></i> Delete Permanent 
                         </button>";
                 }
-                ?>
-                <?php
+                
                 foreach ($_SESSION['user']['access'] as $menu) {
                     if ($menu['menu'] == 'users' && $menu['create_access']) {
                         echo '<button class="btn btn-primary btn-add-users ms-2">

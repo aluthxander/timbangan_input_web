@@ -15,6 +15,7 @@ use Ltech\WebTimbangan\controllers\ItemController;
 use Ltech\WebTimbangan\controllers\HomeController;
 use Ltech\WebTimbangan\controllers\PositionController;
 use Ltech\WebTimbangan\controllers\ProfileController;
+use Ltech\WebTimbangan\controllers\SecurityController;
 use Ltech\WebTimbangan\controllers\TransactionController;
 use Ltech\WebTimbangan\middleware\AdminMiddleWare;
 use Ltech\WebTimbangan\middleware\ApiMiddleWare;
@@ -116,6 +117,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         ApiMiddleWare::auth();
         $transaction = new TransactionController();
         $transaction->saveTransaction();
+    } elseif ($route == 'security') {
+        ApiMiddleWare::auth();
+        $security = new SecurityController();
+        $security->changePassword();
     } else {
         http_response_code(404);
         echo json_encode([

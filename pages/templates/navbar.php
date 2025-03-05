@@ -10,7 +10,7 @@
     </a>
     <ul class="dropdown-menu">
         <li><a class="dropdown-item" href="/profile"><i class="fas fa-user"></i> Profile</a></li>
-        <li><a class="dropdown-item" href="#"><i class="fas fa-key"></i> Ganti Password</a></li>
+        <li><a class="dropdown-item" href="/security"><i class="fas fa-lock"></i> Security</a></li>
         <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </ul>
 </header>
