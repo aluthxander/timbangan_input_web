@@ -23,7 +23,7 @@
 <div class="container-fluid d-flex flex-column justify-content-start align-items-center">
     <div class="row mb-4 mt-1">
         <div class="col-12 text-center">
-            <img src="../../../img/logo/apparel.png" alt="apparel" class="img-fluid" style="max-width: 400px;">
+            <img src="./img/logo/apparel.png" alt="apparel" class="img-fluid" style="max-width: 400px;">
         </div>
     </div>
     <form class="card w-50" style="max-width: 400px;" method="POST">

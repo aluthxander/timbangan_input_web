@@ -110,10 +110,6 @@ $(document).ready(function() {
                             } 
                         },
                         { 
-                            data: 'no_invoice', 
-                            title: 'Invoice Number' 
-                        },
-                        { 
                             data: 'code_item', 
                             title: 'Code Item' 
                         },
